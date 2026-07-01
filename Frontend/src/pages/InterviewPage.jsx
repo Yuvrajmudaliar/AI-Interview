@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import Step1SetUp from '../components/Step1SetUp'
-import Step2Interview from '../components/Step2Interview'
-import Step3Report from '../components/Step3Report'
+import Step1SetUp from '../components/Step1SetUp.jsx'
+import Step2Interview from '../components/Step2Interview.jsx'
+import Step3Report from '../components/Step3Report.jsx'
 
 function InterviewPage() {
 const [step, setStep] = useState(1)
