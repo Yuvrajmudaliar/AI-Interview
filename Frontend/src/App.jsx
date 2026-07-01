@@ -11,7 +11,7 @@ import InterviewReport from "./pages/InterviewReport.jsx";
 import InterviewHistory from "./pages/InterviewHistory.jsx";
 import Pricing from "./pages/Pricing.jsx";
 import { Toaster } from "react-hot-toast";
-export const serverUrl = "http://localhost:8000";
+export const serverUrl = "https://ai-interview-p8wj.onrender.com";
 
 function App() {
   const dispatch = useDispatch();
