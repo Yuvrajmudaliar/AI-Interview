@@ -45,45 +45,32 @@ const handleGoogleAuth = async () => {
 
   try {
     const response = await signInWithPopup(auth, provider);
-
     const user = response.user;
 
-    await axios.post(
+    const result = await axios.post(
       serverUrl + "/api/v1/auth/google",
       {
         name: user.displayName,
         email: user.email,
       },
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
-    console.log("Login API finished");
 
-    const result = await axios.post(
-  serverUrl + "/api/v1/auth/google",
-  {
-    name: user.displayName,
-    email: user.email,
-  },
-  {
-    withCredentials: true,
-  }
-);
+    dispatch(setUserData(result.data.user));
 
-// ✅ immediately update redux from backend response
-dispatch(setUserData(result.data.user));
+    // close modal immediately
     onClose?.();
 
   } catch (error) {
-    console.error("Google login failed:", error);
+    console.error(error);
+    dispatch(setUserData(null));
   } finally {
     setLoading(false);
   }
 };
-
   return (
     <div
+    
       className={`
     w-full
     ${isModel ? "py-4" : "min-h-screen bg-[#f6f1ea] flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20"}

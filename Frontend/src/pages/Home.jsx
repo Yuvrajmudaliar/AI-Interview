@@ -300,7 +300,9 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
           </div>
         </div>
       </div>
-      {showAuth && <AuthModel onClose={() => setShowAuth(false)} />}
+      {!userData && showAuth && (
+  <AuthModel onClose={() => setShowAuth(false)} />
+)}
       <Footer />
     </div>
   );
