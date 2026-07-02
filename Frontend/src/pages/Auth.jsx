@@ -43,37 +43,31 @@ const handleGoogleAuth = async () => {
 
   setLoading(true);
 
-  try {
-    
-   const response = await signInWithPopup(auth, provider);
-   console.log("FIREBASE DONE");
-const user = response.user;
+try {
+  const response = await signInWithPopup(auth, provider);
 
-onClose?.();
+  const user = response.user;
 
-const result = await axios.post(
-  serverUrl + "/api/v1/auth/google",
-  {
-    name: user.displayName,
-    email: user.email,
-  },
-  { withCredentials: true }
-);
+  const result = await axios.post(
+    serverUrl + "/api/v1/auth/google",
+    {
+      name: user.displayName,
+      email: user.email,
+    },
+    {
+      withCredentials: true,
+    }
+  );
 
+  dispatch(setUserData(result.data.user));
+  onClose?.();
 
-
-
-// ✅ IMPORTANT: store FULL user from backend (credits included)
-dispatch(setUserData(result.data.user));
-console.log("Auth dispatched:", result.data.user);
-
-
-  } catch (error) {
-    console.error(error);
-    dispatch(setUserData(null));
-  } finally {
-    setLoading(false);
-  }
+} catch (error) {
+  console.error(error);
+  dispatch(setUserData(null));
+} finally {
+  setLoading(false);
+}
 };
   return (
     <div
@@ -126,7 +120,17 @@ ${isModel ? "max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl" : "max-w-lg p-5 sm:
         bg-[#7a2f43] text-white rounded-full shadow-md shadow-[#7a2f43]/20 hover:bg-[#642638] border border-[#642638]"
         >
           <FcGoogle size={20} />
-           {loading ? "Signing in..." : "Continue with Google"}
+           {loading ? (
+  <>
+    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+    Signing in...
+  </>
+) : (
+  <>
+    <FcGoogle size={20} />
+    Continue with Google
+  </>
+)}
 
         </motion.button>
       </motion.div>
