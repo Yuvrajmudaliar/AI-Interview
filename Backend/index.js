@@ -10,13 +10,13 @@ import paymentRouter from './routes/payment.route.js';
 dotenv.config();
 
 const app= express();
-app.use(cors({
- origin: "https://ai-interview-1frontend.onrender.com",
-  credentials: true
-
-}))
-app.use(express.json());
+app.set("trust proxy", 1); 
 app.use(cookieParser());
+app.use(cors({
+  origin: "https://ai-interview-1frontend.onrender.com",
+  credentials: true
+}));
+app.use(express.json());
 
 
 
