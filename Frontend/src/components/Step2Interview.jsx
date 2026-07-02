@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import maleVideo from "../assets/videos/male-ai.mp4";
 import femaleVideo from "../assets/videos/female-ai.mp4";
 import Timer from "./Timer";
 import { motion } from "motion/react";
@@ -10,9 +9,8 @@ import { BsArrowRight } from "react-icons/bs";
 
 // function Step2Interview({ interviewData, onFinish }) {
 function Step2Interview({
-    interviewData,
-    interviewer,
-    onFinish
+  interviewData,
+  onFinish
 }) {
   const { interviewId, questions, userName } = interviewData;
 
@@ -32,84 +30,31 @@ function Step2Interview({
 
   const currentQuestion = questions?.[currentIndex];
 
-  useEffect(() => {
-    // const loadVoices = () => {
-    //   const voices = window.speechSynthesis.getVoices();
-    //   if (!voices.length) return;
-
-    //   const femaleVoice = voices.find(
-    //     (v) =>
-    //       v.name.toLowerCase().includes("zira") ||
-    //       v.name.toLowerCase().includes("samantha") ||
-    //       v.name.toLowerCase().includes("female"),
-    //   );
-
-    //   if (femaleVoice) {
-    //     setSelectedVoice(femaleVoice);
-    //     setVoiceGender("female");
-    //     return;
-    //   }
-
-    //   const maleVoice = voices.find(
-    //     (v) =>
-    //       v.name.toLowerCase().includes("david") ||
-    //       v.name.toLowerCase().includes("mark") ||
-    //       v.name.toLowerCase().includes("male"),
-    //   );
-
-    //   if (maleVoice) {
-    //     setSelectedVoice(maleVoice);
-    //     setVoiceGender("male");
-    //     return;
-    //   }
-
-    //   setSelectedVoice(voices[0]);
-    //   setVoiceGender("female");
-    // };
-       
-    const loadVoices = () => {
-
+useEffect(() => {
+  const loadVoices = () => {
     const voices = window.speechSynthesis.getVoices();
 
-    if(!voices.length) return;
+    if (!voices.length) return;
 
-    if(interviewer==="female"){
+    const femaleVoice =
+      voices.find((v) => v.name.toLowerCase().includes("female")) ||
+      voices.find((v) => v.name.toLowerCase().includes("samantha")) ||
+      voices.find((v) => v.name.toLowerCase().includes("zira")) ||
+      voices.find((v) => v.lang === "en-US") ||
+      voices[0];
 
-        const voice =
-        voices.find(v=>v.name.toLowerCase().includes("female")) ||
-        voices.find(v=>v.name.toLowerCase().includes("samantha")) ||
-        voices.find(v=>v.name.toLowerCase().includes("zira")) ||
-        voices[0];
+    setSelectedVoice(femaleVoice);
+  };
 
-        setSelectedVoice(voice);
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
 
-    }else{
+  return () => {
+    window.speechSynthesis.onvoiceschanged = null;
+  };
+}, []);
 
-        const voice =
-        voices.find(v=>v.name.toLowerCase().includes("male")) ||
-        voices.find(v=>v.name.toLowerCase().includes("david")) ||
-        voices.find(v=>v.name.toLowerCase().includes("mark")) ||
-        voices[0];
-
-        setSelectedVoice(voice);
-
-    }
-
-}
-    loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-    };
-  }, []);
-
-const videoSource =
-interviewer==="male"
-?
-maleVideo
-:
-femaleVideo;
+const videoSource = femaleVideo;
 
   const speakText = (text) => {
     return new Promise((resolve) => {
@@ -127,7 +72,7 @@ femaleVideo;
 const utterance = new SpeechSynthesisUtterance(humanText);
 
 utterance.voice = selectedVoice;
-utterance.rate = 0.82;   // Slower, more natural
+utterance.rate = 0.92;   // Slower, more natural
 utterance.pitch = 1;
 utterance.volume = 1;
 
