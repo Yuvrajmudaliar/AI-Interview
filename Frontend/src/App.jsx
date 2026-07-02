@@ -11,25 +11,25 @@ import InterviewReport from "./pages/InterviewReport.jsx";
 import InterviewHistory from "./pages/InterviewHistory.jsx";
 import Pricing from "./pages/Pricing.jsx";
 import { Toaster } from "react-hot-toast";
-import { useState } from "react";
 
 export const serverUrl = "https://ai-interview-p8wj.onrender.com";
 
 function App() {
   const dispatch = useDispatch();
-  const [authLoading, setAuthLoading] = useState(true);
- useEffect(() => {
+  
+useEffect(() => {
   const getUser = async () => {
     try {
-      const result = await axios.get(serverUrl + "/api/v1/user/currentUser", {
-        withCredentials: true,
-      });
+      const result = await axios.get(
+        serverUrl + "/api/v1/user/currentUser",
+        {
+          withCredentials: true,
+        }
+      );
 
       dispatch(setUserData(result.data.user));
     } catch (err) {
       dispatch(setUserData(null));
-    } finally {
-      setAuthLoading(false); // ✅ IMPORTANT
     }
   };
 
@@ -37,13 +37,7 @@ function App() {
 }, [dispatch]);
 
 
-if (authLoading) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      Loading...
-    </div>
-  );
-}
+
 
 
   return (

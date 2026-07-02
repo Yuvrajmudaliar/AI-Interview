@@ -111,7 +111,7 @@ ${isModel ? "max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl" : "max-w-lg p-5 sm:
           unlock detailed performance insights.
         </p>
 
-        <motion.button
+        {/* <motion.button
           onClick={handleGoogleAuth}
           disabled={loading}
           whileHover={{ opacity: 0.9, scale: 1.03 }}
@@ -132,7 +132,25 @@ ${isModel ? "max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl" : "max-w-lg p-5 sm:
   </>
 )}
 
-        </motion.button>
+        </motion.button> */}
+
+        <motion.button
+  onClick={handleGoogleAuth}
+  disabled={loading}
+  className="w-full flex items-center justify-center gap-3 py-3 bg-[#7a2f43] text-white rounded-full"
+>
+  {loading ? (
+    <>
+      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+      Signing in...
+    </>
+  ) : (
+    <>
+      <FcGoogle size={20} />
+      Continue with Google
+    </>
+  )}
+</motion.button>
       </motion.div>
     </div>
   );
