@@ -8,7 +8,12 @@ import { serverUrl } from "../App";
 import axios from "axios";
 import { BsArrowRight } from "react-icons/bs";
 
-function Step2Interview({ interviewData, onFinish }) {
+// function Step2Interview({ interviewData, onFinish }) {
+function Step2Interview({
+    interviewData,
+    interviewer,
+    onFinish
+}) {
   const { interviewId, questions, userName } = interviewData;
 
   const [isIntroPhase, setIsIntroPhase] = useState(true);
@@ -21,47 +26,76 @@ function Step2Interview({ interviewData, onFinish }) {
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [voiceGender, setVoiceGender] = useState("female");
+
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
 
   const currentQuestion = questions?.[currentIndex];
 
   useEffect(() => {
+    // const loadVoices = () => {
+    //   const voices = window.speechSynthesis.getVoices();
+    //   if (!voices.length) return;
+
+    //   const femaleVoice = voices.find(
+    //     (v) =>
+    //       v.name.toLowerCase().includes("zira") ||
+    //       v.name.toLowerCase().includes("samantha") ||
+    //       v.name.toLowerCase().includes("female"),
+    //   );
+
+    //   if (femaleVoice) {
+    //     setSelectedVoice(femaleVoice);
+    //     setVoiceGender("female");
+    //     return;
+    //   }
+
+    //   const maleVoice = voices.find(
+    //     (v) =>
+    //       v.name.toLowerCase().includes("david") ||
+    //       v.name.toLowerCase().includes("mark") ||
+    //       v.name.toLowerCase().includes("male"),
+    //   );
+
+    //   if (maleVoice) {
+    //     setSelectedVoice(maleVoice);
+    //     setVoiceGender("male");
+    //     return;
+    //   }
+
+    //   setSelectedVoice(voices[0]);
+    //   setVoiceGender("female");
+    // };
+       
     const loadVoices = () => {
-      const voices = window.speechSynthesis.getVoices();
-      if (!voices.length) return;
 
-      const femaleVoice = voices.find(
-        (v) =>
-          v.name.toLowerCase().includes("zira") ||
-          v.name.toLowerCase().includes("samantha") ||
-          v.name.toLowerCase().includes("female"),
-      );
+    const voices = window.speechSynthesis.getVoices();
 
-      if (femaleVoice) {
-        setSelectedVoice(femaleVoice);
-        setVoiceGender("female");
-        return;
-      }
+    if(!voices.length) return;
 
-      const maleVoice = voices.find(
-        (v) =>
-          v.name.toLowerCase().includes("david") ||
-          v.name.toLowerCase().includes("mark") ||
-          v.name.toLowerCase().includes("male"),
-      );
+    if(interviewer==="female"){
 
-      if (maleVoice) {
-        setSelectedVoice(maleVoice);
-        setVoiceGender("male");
-        return;
-      }
+        const voice =
+        voices.find(v=>v.name.toLowerCase().includes("female")) ||
+        voices.find(v=>v.name.toLowerCase().includes("samantha")) ||
+        voices.find(v=>v.name.toLowerCase().includes("zira")) ||
+        voices[0];
 
-      setSelectedVoice(voices[0]);
-      setVoiceGender("female");
-    };
+        setSelectedVoice(voice);
 
+    }else{
+
+        const voice =
+        voices.find(v=>v.name.toLowerCase().includes("male")) ||
+        voices.find(v=>v.name.toLowerCase().includes("david")) ||
+        voices.find(v=>v.name.toLowerCase().includes("mark")) ||
+        voices[0];
+
+        setSelectedVoice(voice);
+
+    }
+
+}
     loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
 
@@ -70,7 +104,12 @@ function Step2Interview({ interviewData, onFinish }) {
     };
   }, []);
 
-  const videoSource = voiceGender === "male" ? maleVideo : femaleVideo;
+const videoSource =
+interviewer==="male"
+?
+maleVideo
+:
+femaleVideo;
 
   const speakText = (text) => {
     return new Promise((resolve) => {
