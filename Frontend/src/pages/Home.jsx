@@ -11,7 +11,6 @@ import {
 import { HiSparkles } from "react-icons/hi";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import AuthModel from "../components/AuthModel.jsx";
 import hrImg from "../assets/HR.png";
