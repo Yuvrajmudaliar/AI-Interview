@@ -48,7 +48,7 @@ const handleGoogleAuth = async () => {
 
     const user = response.user;
 
-    const result = await axios.post(
+    await axios.post(
       serverUrl + "/api/v1/auth/google",
       {
         name: user.displayName,
@@ -58,10 +58,21 @@ const handleGoogleAuth = async () => {
         withCredentials: true,
       }
     );
+    console.log("Login API finished");
 
-    // ✅ correct
-    dispatch(setUserData(result.data.user));
+    const result = await axios.post(
+  serverUrl + "/api/v1/auth/google",
+  {
+    name: user.displayName,
+    email: user.email,
+  },
+  {
+    withCredentials: true,
+  }
+);
 
+// ✅ immediately update redux from backend response
+dispatch(setUserData(result.data.user));
     onClose?.();
 
   } catch (error) {
