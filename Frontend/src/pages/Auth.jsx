@@ -44,20 +44,10 @@ const handleGoogleAuth = async () => {
   setLoading(true);
 
   try {
-    const response = await signInWithPopup(auth, provider);
+   const response = await signInWithPopup(auth, provider);
 const user = response.user;
 
-// ✅ 1. UPDATE UI IMMEDIATELY (FIXES DELAY)
-dispatch(setUserData({
-  name: user.displayName,
-  email: user.email,
-}));
-
-// ✅ 2. CLOSE MODAL IMMEDIATELY
-onClose?.();
-
-// 3. SEND TO BACKEND (AFTER UI UPDATE)
-await axios.post(
+const result = await axios.post(
   serverUrl + "/api/v1/auth/google",
   {
     name: user.displayName,
@@ -65,6 +55,11 @@ await axios.post(
   },
   { withCredentials: true }
 );
+
+// ✅ IMPORTANT: store FULL user from backend (credits included)
+dispatch(setUserData(result.data.user));
+
+onClose?.();
   } catch (error) {
     console.error(error);
     dispatch(setUserData(null));
