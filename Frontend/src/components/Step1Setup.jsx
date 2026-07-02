@@ -69,6 +69,7 @@ function Step1Setup({ onStart }) {
       setLoading(false);
       onStart(result.data);
     } catch (error) {
+       alert(error.response?.data?.message || error.message);
       console.log(error);
       setLoading(false);
     }
