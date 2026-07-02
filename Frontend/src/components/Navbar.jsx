@@ -16,6 +16,7 @@ import AuthModel from "./AuthModel.jsx";
 function Navbar() {
   const state = useSelector((state) => state);
   const userData = state.user.userData;
+  console.log("Navbar userData:", userData);
   const [showCreditsPopup, setShowCreditsPopup] = useState(false);
   const [showUserPopup, setShowUserPopup] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
