@@ -11,7 +11,7 @@ export const googleAuth = async (req, res) => {
       user = await User.create({
         name,
         email,
-        credits: 10, // or default value
+        credits: 100, 
       });
     }
 
