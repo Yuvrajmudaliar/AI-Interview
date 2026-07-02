@@ -56,10 +56,12 @@ const result = await axios.post(
   { withCredentials: true }
 );
 
+onClose?.();
+
 // ✅ IMPORTANT: store FULL user from backend (credits included)
 dispatch(setUserData(result.data.user));
 
-onClose?.();
+
   } catch (error) {
     console.error(error);
     dispatch(setUserData(null));
