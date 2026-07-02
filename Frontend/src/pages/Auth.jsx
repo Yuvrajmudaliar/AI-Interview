@@ -48,7 +48,7 @@ const handleGoogleAuth = async () => {
 
     const user = response.user;
 
-    await axios.post(
+    const result = await axios.post(
       serverUrl + "/api/v1/auth/google",
       {
         name: user.displayName,
@@ -59,14 +59,8 @@ const handleGoogleAuth = async () => {
       }
     );
 
-    const currentUser = await axios.get(
-      serverUrl + "/api/v1/user/currentUser",
-      {
-        withCredentials: true,
-      }
-    );
-
-    dispatch(setUserData(currentUser.data.user || currentUser.data));
+    // ✅ correct
+    dispatch(setUserData(result.data.user));
 
     onClose?.();
 
