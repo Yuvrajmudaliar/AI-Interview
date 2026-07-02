@@ -45,22 +45,26 @@ const handleGoogleAuth = async () => {
 
   try {
     const response = await signInWithPopup(auth, provider);
-    const user = response.user;
+const user = response.user;
 
-    const result = await axios.post(
-      serverUrl + "/api/v1/auth/google",
-      {
-        name: user.displayName,
-        email: user.email,
-      },
-      { withCredentials: true }
-    );
+// ✅ 1. UPDATE UI IMMEDIATELY (FIXES DELAY)
+dispatch(setUserData({
+  name: user.displayName,
+  email: user.email,
+}));
 
-    dispatch(setUserData(result.data.user));
+// ✅ 2. CLOSE MODAL IMMEDIATELY
+onClose?.();
 
-    // close modal immediately
-    onClose?.();
-
+// 3. SEND TO BACKEND (AFTER UI UPDATE)
+await axios.post(
+  serverUrl + "/api/v1/auth/google",
+  {
+    name: user.displayName,
+    email: user.email,
+  },
+  { withCredentials: true }
+);
   } catch (error) {
     console.error(error);
     dispatch(setUserData(null));
@@ -70,7 +74,7 @@ const handleGoogleAuth = async () => {
 };
   return (
     <div
-    
+
       className={`
     w-full
     ${isModel ? "py-4" : "min-h-screen bg-[#f6f1ea] flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20"}
