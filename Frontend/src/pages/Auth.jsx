@@ -44,8 +44,12 @@ const handleGoogleAuth = async () => {
   setLoading(true);
 
   try {
+    console.log("START");
    const response = await signInWithPopup(auth, provider);
+   console.log("FIREBASE DONE");
 const user = response.user;
+
+onClose?.();
 
 const result = await axios.post(
   serverUrl + "/api/v1/auth/google",
@@ -55,8 +59,9 @@ const result = await axios.post(
   },
   { withCredentials: true }
 );
+console.log("BACKEND DONE");
 
-onClose?.();
+
 
 // ✅ IMPORTANT: store FULL user from backend (credits included)
 dispatch(setUserData(result.data.user));
