@@ -12,6 +12,7 @@ import InterviewHistory from "./pages/InterviewHistory.jsx";
 import Pricing from "./pages/Pricing.jsx";
 import { Toaster } from "react-hot-toast";
 import { useState } from "react";
+import LoadingScreen from "./components/LoadingScreen.jsx";
 export const serverUrl = "https://ai-interview-p8wj.onrender.com";
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
 }, [dispatch]);
 
   if (authLoading) return <LoadingScreen />;
-  
+
   return (
     <>
      <Toaster position="top-center" />
