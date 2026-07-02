@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 
 import {
@@ -28,6 +28,11 @@ function Home() {
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.user);
+  useEffect(() => {
+  if (userData) {
+    setShowAuth(false);
+  }
+}, [userData]);
   return (
     <div className="min-h-screen bg-[#f6f1ea] flex flex-col text-[#202124]">
       <Navbar />

@@ -65,15 +65,17 @@ const videoSource = femaleVideo;
 
       window.speechSynthesis.cancel();
 
-    const humanText = text
+ const humanText = text
   .replace(/,/g, ", ")
-  .replace(/\./g, ". ");
+  .replace(/\./g, ". ")
+  .replace(/\?/g, "? ")
+  .replace(/!/g, "! ");
 
 const utterance = new SpeechSynthesisUtterance(humanText);
 
 utterance.voice = selectedVoice;
-utterance.rate = 0.92;   // Slower, more natural
-utterance.pitch = 1;
+utterance.rate = 0.8;      // slower
+utterance.pitch = 1.05;    // slightly softer
 utterance.volume = 1;
 
 if (selectedVoice.lang) {
@@ -87,21 +89,23 @@ if (selectedVoice.lang) {
         videoRef.current?.play();
       };
 
-      utterance.onend = () => {
-        videoRef.current?.pause();
-     videoRef.current.currentTime = 0;
-videoRef.current.play().catch(() => {});
+   utterance.onend = () => {
+  setIsAIPlaying(false);
 
-        setIsAIPlaying(false);
-        if (isMicOn) {
-          startMic();
-        }
+  if (videoRef.current) {
+    videoRef.current.pause();
+    videoRef.current.currentTime = 0;
+  }
 
-        setTimeout(() => {
-          setSubtitle("");
-          resolve();
-        }, 300);
-      };
+  if (isMicOn) {
+    startMic();
+  }
+
+  setTimeout(() => {
+    setSubtitle("");
+    resolve();
+  }, 300);
+};
       setSubtitle(text);
       window.speechSynthesis.speak(utterance);
     });

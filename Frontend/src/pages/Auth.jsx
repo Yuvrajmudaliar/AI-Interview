@@ -9,34 +9,74 @@ import { serverUrl } from "../App";
 import { signInWithPopup } from "firebase/auth";
 import { setUserData } from "../redux/userSlice.js";
 import { useDispatch } from "react-redux";
-
+import { useState } from "react";
 // function Auth({ isModel = false }) {
 function Auth({ isModel = false, onClose }) {
   const dispatch = useDispatch();
-  const handleGoogleAuth = async () => {
-    try {
-      const response = await signInWithPopup(auth, provider);
-      let User = response.user;
-      let name = User.displayName;
-      let email = User.email;
-      const result = await axios.post(
-        serverUrl + "/api/v1/auth/google",
-        {
-          name,
-          email,
-        },
-        {
-          withCredentials: true,
-        },
-      );
-      dispatch(setUserData(result.data.user));
-      if (onClose) {
-  onClose();
-}
-    } catch (error) {
-      dispatch(setUserData(null));
-    }
-  };
+  const [loading, setLoading] = useState(false);
+//   const handleGoogleAuth = async () => {
+//     try {
+//       const response = await signInWithPopup(auth, provider);
+//       let User = response.user;
+//       let name = User.displayName;
+//       let email = User.email;
+//       const result = await axios.post(
+//         serverUrl + "/api/v1/auth/google",
+//         {
+//           name,
+//           email,
+//         },
+//         {
+//           withCredentials: true,
+//         },
+//       );
+//       dispatch(setUserData(result.data.user));
+//       if (onClose) {
+//   onClose();
+// }
+//     } catch (error) {
+//       dispatch(setUserData(null));
+//     }
+//   };
+const handleGoogleAuth = async () => {
+  if (loading) return;
+
+  setLoading(true);
+
+  try {
+    const response = await signInWithPopup(auth, provider);
+
+    const user = response.user;
+
+    await axios.post(
+      serverUrl + "/api/v1/auth/google",
+      {
+        name: user.displayName,
+        email: user.email,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    const currentUser = await axios.get(
+      serverUrl + "/api/v1/user/currentUser",
+      {
+        withCredentials: true,
+      }
+    );
+
+    dispatch(setUserData(currentUser.data.user || currentUser.data));
+
+    onClose?.();
+
+  } catch (error) {
+    console.error("Google login failed:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <div
       className={`
@@ -80,13 +120,15 @@ ${isModel ? "max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl" : "max-w-lg p-5 sm:
 
         <motion.button
           onClick={handleGoogleAuth}
+          disabled={loading}
           whileHover={{ opacity: 0.9, scale: 1.03 }}
           whileTap={{ opacity: 1, scale: 0.98 }}
           className="w-full flex items-center justify-center gap-3 py-3
         bg-[#7a2f43] text-white rounded-full shadow-md shadow-[#7a2f43]/20 hover:bg-[#642638] border border-[#642638]"
         >
           <FcGoogle size={20} />
-          Continue with Google
+           {loading ? "Signing in..." : "Continue with Google"}
+
         </motion.button>
       </motion.div>
     </div>
