@@ -27,7 +27,8 @@ function InterviewerSelection({ onSelect }) {
           >
 
             <img
-              src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png"
+              src="   https://cdn-icons-png.flaticon.com/512/4140/4140051.png"
+           
               alt="Female"
               className="w-40 mx-auto"
             />
@@ -52,7 +53,7 @@ function InterviewerSelection({ onSelect }) {
           >
 
             <img
-              src="https://cdn-icons-png.flaticon.com/512/4140/4140051.png"
+              src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png"
               alt="Male"
               className="w-40 mx-auto"
             />

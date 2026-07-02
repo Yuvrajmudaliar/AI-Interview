@@ -120,13 +120,20 @@ femaleVideo;
 
       window.speechSynthesis.cancel();
 
-      const humanText = text.replace(/,/g, ", ... ").replace(/\./g, ". ... ");
+    const humanText = text
+  .replace(/,/g, ", ")
+  .replace(/\./g, ". ");
 
-      const utterance = new SpeechSynthesisUtterance(humanText);
-      utterance.voice = selectedVoice;
-      utterance.rate = 0.92;
-      utterance.pitch = 1.05;
-      utterance.volume = 1;
+const utterance = new SpeechSynthesisUtterance(humanText);
+
+utterance.voice = selectedVoice;
+utterance.rate = 0.82;   // Slower, more natural
+utterance.pitch = 1;
+utterance.volume = 1;
+
+if (selectedVoice.lang) {
+  utterance.lang = selectedVoice.lang;
+}
 
       utterance.onstart = () => {
         setIsAIPlaying(true);
@@ -137,7 +144,8 @@ femaleVideo;
 
       utterance.onend = () => {
         videoRef.current?.pause();
-        videoRef.current.currentTime = 0;
+     videoRef.current.currentTime = 0;
+videoRef.current.play().catch(() => {});
 
         setIsAIPlaying(false);
         if (isMicOn) {
@@ -171,7 +179,7 @@ femaleVideo;
 
         setIsIntroPhase(false);
       } else if (currentQuestion) {
-        await new Promise((r) => setTimeout(r, 800));
+        await new Promise((r) => setTimeout(r, 250));
 
         // If last question (hard level)
 
