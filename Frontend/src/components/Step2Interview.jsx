@@ -29,7 +29,7 @@ function Step2Interview({
 
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
-  const [, setVoicesReady] = useState(false);
+ const [voicesReady, setVoicesReady] = useState(false);
 const [micRunning, setMicRunning] = useState(false);
 
   const currentQuestion = questions?.[currentIndex];
@@ -81,39 +81,17 @@ const getPreferredVoice = () => {
   if (!voices.length) return null;
   const englishVoices = voices.filter((voice) => voice.lang?.startsWith("en"));
 
-  return (
-    englishVoices.find(isLikelyFemaleVoice) ||
-    voices.find(isLikelyFemaleVoice) ||
-    englishVoices.find((voice) => !isLikelyMaleVoice(voice)) ||
-    englishVoices[0] ||
-    voices.find((voice) => !isLikelyMaleVoice(voice)) ||
-    voices[0]
-  );
+return (
+  englishVoices.find(isLikelyFemaleVoice) ||
+  voices.find(isLikelyFemaleVoice) ||
+  voices.find((voice) => voice.default) ||
+  englishVoices.find((voice) => !isLikelyMaleVoice(voice)) ||
+  englishVoices[0] ||
+  voices[0]
+);
 };
 
-const waitForPreferredVoice = () => {
-  const voice = getPreferredVoice();
-  if (voice && isLikelyFemaleVoice(voice)) return Promise.resolve(voice);
 
-  return new Promise(async (resolve) => {
-    const finish = () => {
-      speechSynthesis.removeEventListener?.("voiceschanged", handleVoicesChanged);
-      resolve(getPreferredVoice());
-    };
-
-    const handleVoicesChanged = () => {
-      const updatedVoice = getPreferredVoice();
-      if (updatedVoice && isLikelyFemaleVoice(updatedVoice)) {
-        clearTimeout(timeout);
-        finish();
-      }
-    };
-
-    const timeout = setTimeout(finish, 900);
-
-    speechSynthesis.addEventListener?.("voiceschanged", handleVoicesChanged);
-  });
-};
 
 useEffect(() => {
   let mounted = true;
@@ -148,6 +126,10 @@ const videoSource = femaleVideo;
 const speakText = (text) => {
     console.log("🟢 speakText called:", Date.now());
   return new Promise((resolve) => {
+    if (!voicesReady) {
+  resolve();
+  return;
+}
     if (!("speechSynthesis" in window)) {
       console.log("Speech synthesis not supported");
       resolve();
@@ -161,12 +143,12 @@ const speakText = (text) => {
       speechSynthesis.cancel();
     }
 
-    const voice = selectedVoice || await waitForPreferredVoice();
-    const utterance = new SpeechSynthesisUtterance(text);
+   const utterance = new SpeechSynthesisUtterance(text);
 
-  utterance.lang = "en-US";
+const voice = selectedVoice || getPreferredVoice();
 
-// Only assign the voice if one was found
+utterance.lang = "en-US";
+
 if (voice) {
   utterance.voice = voice;
 }
