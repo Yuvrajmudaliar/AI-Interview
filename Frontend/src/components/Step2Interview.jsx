@@ -26,7 +26,7 @@ function Step2Interview({
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+const introDone = useRef(false);
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
  const [voicesReady, setVoicesReady] = useState(false);
@@ -214,7 +214,11 @@ window.speechSynthesis.speak(utterance);
 };
 useEffect(() => {
   const runIntro = async () => {
+    if (introDone.current) return;
+
     if (isIntroPhase) {
+      introDone.current = true;
+
       await speakText(
         `Hi ${userName}, welcome! It's great to meet you. I hope you're ready to begin.`,
       );
@@ -224,24 +228,12 @@ useEffect(() => {
       );
 
       setIsIntroPhase(false);
-  startMic();
-    } else if (currentQuestion) {
-      
-
-      // If last question (hard level)
-
-      if (currentIndex === questions.length - 1) {
-        await speakText(
-          "Alright, this one might be a bit more challenging. ",
-        );
-      }
-
-      await speakText(currentQuestion.question);
+      setCurrentIndex(0);
     }
   };
 
   runIntro();
-}, [isIntroPhase, currentIndex]);
+}, []);
 
   {
     /*Timer logic*/
