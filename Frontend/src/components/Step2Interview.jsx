@@ -220,15 +220,18 @@ useEffect(() => {
     setIsIntroPhase(true);
 
     await speakText(
-      `Hi ${userName}, welcome! It's great to meet you. I hope you're ready to begin.`,
+      `Hi ${userName}, welcome! It's great to meet you.`
     );
 
     await speakText(
-      "I'll ask you a few questions. Answer naturally and take your time.",
+      "I'll ask you a few questions. Answer naturally and take your time."
     );
 
     setIsIntroPhase(false);
-    setCurrentIndex(0);
+
+    setTimeout(() => {
+      setCurrentIndex(0);
+    }, 300);
   };
 
   startFlow();
@@ -238,26 +241,29 @@ useEffect(() => {
     /*Timer logic*/
   }
   useEffect(() => {
-   if (isIntroPhase || hasStartedRef.current === false) return;
-    if (!currentQuestion) return;
+  if (isIntroPhase) return;
+  if (!hasStartedRef.current) return;
+  if (isAIPlaying) return;
+  if (!currentQuestion) return;
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  const timer = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(timer);
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
 
-    return () => clearInterval(timer);
-  }, [isIntroPhase, currentIndex]);
+  return () => clearInterval(timer);
+}, [isIntroPhase, currentIndex, isAIPlaying]);
 
 useEffect(() => {
   if (isIntroPhase) return;
-  if (currentIndex === 0) return; // prevents early trigger
+  if (!hasStartedRef.current) return;
   if (!currentQuestion) return;
+  if (isAIPlaying) return;
 
   speakText(currentQuestion.question);
 }, [currentIndex, isIntroPhase]);
