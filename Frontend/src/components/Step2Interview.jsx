@@ -26,7 +26,7 @@ function Step2Interview({
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-const introDone = useRef(false);
+const hasStartedRef = useRef(false);
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
  const [voicesReady, setVoicesReady] = useState(false);
@@ -213,33 +213,32 @@ window.speechSynthesis.speak(utterance);
   });
 };
 useEffect(() => {
-  const runIntro = async () => {
-    if (introDone.current) return;
+  const startFlow = async () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
 
-    if (isIntroPhase) {
-      introDone.current = true;
+    setIsIntroPhase(true);
 
-      await speakText(
-        `Hi ${userName}, welcome! It's great to meet you. I hope you're ready to begin.`,
-      );
+    await speakText(
+      `Hi ${userName}, welcome! It's great to meet you. I hope you're ready to begin.`,
+    );
 
-      await speakText(
-        "I'll ask you a few questions. Answer naturally, take your time, and do your best. Let's begin.",
-      );
+    await speakText(
+      "I'll ask you a few questions. Answer naturally and take your time.",
+    );
 
-      setIsIntroPhase(false);
-      setCurrentIndex(0);
-    }
+    setIsIntroPhase(false);
+    setCurrentIndex(0);
   };
 
-  runIntro();
+  startFlow();
 }, []);
 
   {
     /*Timer logic*/
   }
   useEffect(() => {
-    if (isIntroPhase) return;
+   if (isIntroPhase || hasStartedRef.current === false) return;
     if (!currentQuestion) return;
 
     const timer = setInterval(() => {
@@ -255,7 +254,13 @@ useEffect(() => {
     return () => clearInterval(timer);
   }, [isIntroPhase, currentIndex]);
 
+useEffect(() => {
+  if (isIntroPhase) return;
+  if (currentIndex === 0) return; // prevents early trigger
+  if (!currentQuestion) return;
 
+  speakText(currentQuestion.question);
+}, [currentIndex, isIntroPhase]);
 
 
 useEffect(() => {
