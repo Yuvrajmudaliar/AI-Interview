@@ -118,7 +118,7 @@ const skillsText = Array.isArray(skills) && skills.length
 ? skills.join(", ")
 : "None";
 
-const safeResume = resumeText?.trim() || "None";
+const safeResume = (resumeText || "").substring(0, 2000);
 
 const userPrompt = `
 Role:${role}
@@ -173,7 +173,11 @@ Make questions based on the candidate’s role, experience,interviewMode, projec
       }
     ];
 
-    const aiResponse = await askAi(messages)
+console.time("OpenRouter");
+
+const aiResponse = await askAi(messages);
+
+console.timeEnd("OpenRouter");
 
 if (!aiResponse || !aiResponse.trim()) {
     return res.status(500).json({
