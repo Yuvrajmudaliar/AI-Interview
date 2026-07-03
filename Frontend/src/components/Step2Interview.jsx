@@ -126,10 +126,22 @@ const videoSource = femaleVideo;
 const speakText = (text) => {
     console.log("🟢 speakText called:", Date.now());
   return new Promise((resolve) => {
-    if (!voicesReady) {
-  resolve();
-  return;
-}
+ const waitForVoices = () => {
+  return new Promise((resolve) => {
+    const voices = window.speechSynthesis.getVoices();
+
+    if (voices.length > 0) {
+      resolve();
+      return;
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {
+      resolve();
+    };
+
+    setTimeout(resolve, 1000); // fallback
+  });
+};
     if (!("speechSynthesis" in window)) {
       console.log("Speech synthesis not supported");
       resolve();
@@ -202,6 +214,7 @@ if (voice) {
       setSubtitle("");
       resolve();
     };
+    await waitForVoices();
 
     console.time("Speech");
 if (window.speechSynthesis.speaking) {
