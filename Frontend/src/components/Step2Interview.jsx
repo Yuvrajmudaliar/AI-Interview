@@ -83,6 +83,7 @@ const videoSource = femaleVideo;
 
 
 const speakText = (text) => {
+    console.log("🟢 speakText called:", Date.now());
   return new Promise((resolve) => {
     if (!voicesReady || !selectedVoice) {
       console.log("Voice not ready");
@@ -106,8 +107,8 @@ const speakText = (text) => {
     utterance.volume = 1;
 
     utterance.onstart = () => {
-      console.log("🎙️ Speech Started");
-
+    console.log("🎙️ Speech Started");
+  console.log("🟢 Speech actually started:", Date.now());
       setSubtitle(text);
       setIsAIPlaying(true);
 
