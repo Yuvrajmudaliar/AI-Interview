@@ -60,11 +60,10 @@ useEffect(() => {
     if (!mounted) return;
 
     const femaleVoice =
-      voices.find(v => v.name.toLowerCase().includes("female")) ||
-      voices.find(v => v.name.toLowerCase().includes("samantha")) ||
-      voices.find(v => v.name.toLowerCase().includes("zira")) ||
-      voices.find(v => v.lang.startsWith("en")) ||
-      voices[0];
+  voices.find(v => v.name === "Google US English") ||
+  voices.find(v => v.name === "Microsoft David - English (United States)") ||
+  voices.find(v => v.lang === "en-US") ||
+  voices[0];
 
     console.log("Voice Loaded:", femaleVoice?.name);
 
@@ -154,7 +153,11 @@ const speakText = (text) => {
     };
 
     console.time("Speech");
-speechSynthesis.speak(utterance);
+    speechSynthesis.cancel();
+
+await new Promise(resolve => setTimeout(resolve, 100));
+window.speechSynthesis.resume();
+window.speechSynthesis.speak(utterance);
   });
 };
 useEffect(() => {
