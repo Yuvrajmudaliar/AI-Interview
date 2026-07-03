@@ -24,7 +24,10 @@ function Step1Setup({ onStart }) {
   const [analysisDone, setAnalysisDone] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const { userData } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+const aiPlayingRef = useRef(false);
+
+
+
 
   const handleUploadResume = async () => {
     setAnalyzing(true);
