@@ -30,11 +30,43 @@ function Step2Interview({
 
   const currentQuestion = questions?.[currentIndex];
 
-useEffect(() => {
-  const loadVoices = () => {
-    const voices = window.speechSynthesis.getVoices();
+// useEffect(() => {
+//   const loadVoices = () => {
+//     const voices = window.speechSynthesis.getVoices();
 
-    if (!voices.length) return;
+//     if (!voices.length) return;
+
+//     const femaleVoice =
+//       voices.find((v) => v.name.toLowerCase().includes("female")) ||
+//       voices.find((v) => v.name.toLowerCase().includes("samantha")) ||
+//       voices.find((v) => v.name.toLowerCase().includes("zira")) ||
+//       voices.find((v) => v.lang === "en-US") ||
+//       voices[0];
+
+//     setSelectedVoice(femaleVoice);
+//   };
+
+//   loadVoices();
+//   window.speechSynthesis.onvoiceschanged = loadVoices;
+
+//   return () => {
+//     window.speechSynthesis.onvoiceschanged = null;
+//   };
+// }, []);
+
+useEffect(() => {
+  const loadVoices = async () => {
+    let voices = window.speechSynthesis.getVoices();
+
+    if (!voices.length) {
+      await new Promise((resolve) => {
+        window.speechSynthesis.onvoiceschanged = () => {
+          resolve();
+        };
+      });
+
+      voices = window.speechSynthesis.getVoices();
+    }
 
     const femaleVoice =
       voices.find((v) => v.name.toLowerCase().includes("female")) ||
@@ -47,7 +79,6 @@ useEffect(() => {
   };
 
   loadVoices();
-  window.speechSynthesis.onvoiceschanged = loadVoices;
 
   return () => {
     window.speechSynthesis.onvoiceschanged = null;
@@ -107,7 +138,12 @@ if (selectedVoice.lang) {
   }, 300);
 };
       setSubtitle(text);
-      window.speechSynthesis.speak(utterance);
+      // window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.cancel();
+
+setTimeout(() => {
+  window.speechSynthesis.speak(utterance);
+}, 100);
     });
   };
 
