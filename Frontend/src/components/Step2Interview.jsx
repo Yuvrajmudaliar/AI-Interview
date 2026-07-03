@@ -9,6 +9,7 @@ import { BsArrowRight } from "react-icons/bs";
 
 
 
+
 function Step2Interview({
   interviewData,
   onFinish
