@@ -24,7 +24,7 @@ function Step2Interview({
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+const [isRecognitionRunning, setIsRecognitionRunning] = useState(false);
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
 
@@ -55,24 +55,23 @@ function Step2Interview({
 // }, []);
 
 useEffect(() => {
-  const loadVoices = async () => {
-    let voices = window.speechSynthesis.getVoices();
+  let cancelled = false;
+
+  const loadVoices = () => {
+    const voices = speechSynthesis.getVoices();
 
     if (!voices.length) {
-      await new Promise((resolve) => {
-        window.speechSynthesis.onvoiceschanged = () => {
-          resolve();
-        };
-      });
-
-      voices = window.speechSynthesis.getVoices();
+      setTimeout(loadVoices, 100);
+      return;
     }
 
+    if (cancelled) return;
+
     const femaleVoice =
-      voices.find((v) => v.name.toLowerCase().includes("female")) ||
-      voices.find((v) => v.name.toLowerCase().includes("samantha")) ||
-      voices.find((v) => v.name.toLowerCase().includes("zira")) ||
-      voices.find((v) => v.lang === "en-US") ||
+      voices.find(v => v.name.toLowerCase().includes("female")) ||
+      voices.find(v => v.name.toLowerCase().includes("samantha")) ||
+      voices.find(v => v.name.toLowerCase().includes("zira")) ||
+      voices.find(v => v.lang === "en-US") ||
       voices[0];
 
     setSelectedVoice(femaleVoice);
@@ -81,10 +80,9 @@ useEffect(() => {
   loadVoices();
 
   return () => {
-    window.speechSynthesis.onvoiceschanged = null;
+    cancelled = true;
   };
 }, []);
-
 const videoSource = femaleVideo;
 
   const speakText = (text) => {
@@ -127,10 +125,11 @@ if (selectedVoice.lang) {
     videoRef.current.pause();
     videoRef.current.currentTime = 0;
   }
-
-  if (isMicOn) {
+if (isMicOn) {
+  setTimeout(() => {
     startMic();
-  }
+  }, 400);
+}
 
   setTimeout(() => {
     setSubtitle("");
@@ -205,6 +204,18 @@ setTimeout(() => {
     if (!("webkitSpeechRecognition" in window)) return;
 
     const recognition = new window.webkitSpeechRecognition();
+    recognition.onstart = () => {
+  setIsRecognitionRunning(true);
+};
+
+recognition.onend = () => {
+  setIsRecognitionRunning(false);
+};
+
+recognition.onerror = (e) => {
+  console.log("Recognition error:", e.error);
+  setIsRecognitionRunning(false);
+};
     recognition.lang = "en-US";
     recognition.continuous = true;
     recognition.interimResults = false;
@@ -222,21 +233,45 @@ setTimeout(() => {
     recognitionRef.current = recognition;
   }, []);
 
+  // const startMic = () => {
+  //   if (recognitionRef.current && !isAIPlaying) {
+  //     try {
+  //       recognitionRef.current.start();
+  //     } catch (error) {
+  //       console.error(`Speech recognition already started Error ${error}`);
+  //     }
+  //   }
+  // };
   const startMic = () => {
-    if (recognitionRef.current && !isAIPlaying) {
-      try {
-        recognitionRef.current.start();
-      } catch (error) {
-        console.error(`Speech recognition already started Error ${error}`);
-      }
-    }
-  };
+  if (
+    !recognitionRef.current ||
+    isAIPlaying ||
+    isRecognitionRunning
+  ) {
+    return;
+  }
+
+  try {
+    recognitionRef.current.start();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+  // const stopMic = () => {
+  //   if (recognitionRef.current) {
+  //     recognitionRef.current.stop();
+  //   }
+  // };
 
   const stopMic = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-  };
+  if (!recognitionRef.current) return;
+
+  try {
+    recognitionRef.current.stop();
+    recognitionRef.current.abort();
+  } catch (e) {}
+};
 
   const toggleMic = () => {
     if (isMicOn) {
