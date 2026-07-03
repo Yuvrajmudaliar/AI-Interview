@@ -122,14 +122,38 @@ useEffect(() => {
 }, []);
 const videoSource = femaleVideo;
 
-const speakText = async (text) => {
-  console.log("🟢 speakText called:", Date.now());
+const waitForVoices = () =>
+  new Promise((resolve) => {
+    let voices = speechSynthesis.getVoices();
+
+    if (voices.length) {
+      resolve(voices);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      voices = speechSynthesis.getVoices();
+      if (voices.length) {
+        clearInterval(interval);
+        resolve(voices);
+      }
+    }, 100);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      resolve(speechSynthesis.getVoices());
+    }, 2000);
+  });
+
+
+  const speakText = async (text) => {
+  console.log("🟢 speakText called");
 
   if (!("speechSynthesis" in window)) return;
 
   stopMic();
 
-  await waitForVoices(); // MUST come early
+  const voices = await waitForVoices();
 
   if (speechSynthesis.speaking) {
     speechSynthesis.cancel();
@@ -137,41 +161,56 @@ const speakText = async (text) => {
 
   const utterance = new SpeechSynthesisUtterance(text);
 
-  const voices = window.speechSynthesis.getVoices();
-  const voice = selectedVoice || voices.find(v => v.lang === "en-US");
-
-  utterance.lang = "en-US";
+  const voice =
+    selectedVoice ||
+    voices.find(v => v.lang === "en-US") ||
+    voices[0];
 
   if (voice) utterance.voice = voice;
 
+  utterance.lang = "en-US";
   utterance.rate = 0.92;
   utterance.pitch = 1.05;
   utterance.volume = 1;
 
   utterance.onstart = () => {
+    console.log("🎙️ Speech Started");
     setSubtitle(text);
     setIsAIPlaying(true);
   };
 
   utterance.onend = () => {
+    console.log("✅ Speech Ended");
+
     setIsAIPlaying(false);
     setSubtitle("");
 
-    if (micOnRef.current) startMic();
+    if (micOnRef.current) {
+      startMic();
+    }
   };
 
   utterance.onerror = (e) => {
-    console.log("Speech Error:", e);
+    console.log("❌ Speech Error:", e);
     setIsAIPlaying(false);
     setSubtitle("");
   };
 
-  console.time("Speech");
+  speechSynthesis.cancel();
 
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.resume();
-  window.speechSynthesis.speak(utterance);
+  setTimeout(() => {
+    speechSynthesis.speak(utterance);
+  }, 100);
 };
+
+useEffect(() => {
+  const unlockSpeech = () => {
+    speechSynthesis.getVoices();
+    window.removeEventListener("click", unlockSpeech);
+  };
+
+  window.addEventListener("click", unlockSpeech);
+}, []);
 useEffect(() => {
   const startFlow = async () => {
     if (hasStartedRef.current) return;
