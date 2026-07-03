@@ -45,17 +45,74 @@ useEffect(() => {
   aiPlayingRef.current = isAIPlaying;
 }, [isAIPlaying]);
 
+const femaleVoiceNames = [
+  "female",
+  "zira",
+  "jenny",
+  "aria",
+  "sonia",
+  "susan",
+  "samantha",
+  "victoria",
+  "karen",
+  "moira",
+  "tessa",
+  "natasha",
+  "google us english",
+  "google uk english female",
+];
+
+const maleVoiceNames = ["male", "david", "mark", "guy", "george", "ryan"];
+
+const isLikelyFemaleVoice = (voice) => {
+  const name = voice?.name?.toLowerCase() || "";
+  return femaleVoiceNames.some((femaleName) => name.includes(femaleName));
+};
+
+const isLikelyMaleVoice = (voice) => {
+  const name = voice?.name?.toLowerCase() || "";
+  return maleVoiceNames.some((maleName) => name.includes(maleName));
+};
+
 const getPreferredVoice = () => {
   if (!("speechSynthesis" in window)) return null;
 
   const voices = window.speechSynthesis.getVoices();
   if (!voices.length) return null;
+  const englishVoices = voices.filter((voice) => voice.lang?.startsWith("en"));
 
   return (
-    voices.find((voice) => voice.default) ||
-    voices.find((voice) => voice.lang?.startsWith("en")) ||
+    englishVoices.find(isLikelyFemaleVoice) ||
+    voices.find(isLikelyFemaleVoice) ||
+    englishVoices.find((voice) => !isLikelyMaleVoice(voice)) ||
+    englishVoices[0] ||
+    voices.find((voice) => !isLikelyMaleVoice(voice)) ||
     voices[0]
   );
+};
+
+const waitForPreferredVoice = () => {
+  const voice = getPreferredVoice();
+  if (voice && isLikelyFemaleVoice(voice)) return Promise.resolve(voice);
+
+  return new Promise(async (resolve) => {
+    const finish = () => {
+      speechSynthesis.removeEventListener?.("voiceschanged", handleVoicesChanged);
+      resolve(getPreferredVoice());
+    };
+
+    const handleVoicesChanged = () => {
+      const updatedVoice = getPreferredVoice();
+      if (updatedVoice && isLikelyFemaleVoice(updatedVoice)) {
+        clearTimeout(timeout);
+        finish();
+      }
+    };
+
+    const timeout = setTimeout(finish, 900);
+
+    speechSynthesis.addEventListener?.("voiceschanged", handleVoicesChanged);
+  });
 };
 
 useEffect(() => {
@@ -104,8 +161,8 @@ const speakText = (text) => {
       speechSynthesis.cancel();
     }
 
+    const voice = selectedVoice || await waitForPreferredVoice();
     const utterance = new SpeechSynthesisUtterance(text);
-    const voice = selectedVoice || getPreferredVoice();
 
   utterance.lang = "en-US";
 
