@@ -26,6 +26,20 @@ function Step1Setup({ onStart }) {
   const { userData } = useSelector((state) => state.user);
 const dispatch = useDispatch();
 
+  const warmUpSpeechSynthesis = () => {
+    if (!("speechSynthesis" in window)) return;
+
+    window.speechSynthesis.getVoices();
+
+    const warmup = new SpeechSynthesisUtterance(" ");
+    warmup.volume = 0;
+    window.speechSynthesis.speak(warmup);
+
+    setTimeout(() => {
+      window.speechSynthesis.cancel();
+    }, 0);
+  };
+
 
 
   const handleUploadResume = async () => {
@@ -55,6 +69,7 @@ const dispatch = useDispatch();
   };
 
   const handleStart = async () => {
+    warmUpSpeechSynthesis();
     setLoading(true);
     try {
       const result = await axios.post(

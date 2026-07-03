@@ -29,7 +29,7 @@ function Step2Interview({
 
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
-  const [voicesReady, setVoicesReady] = useState(false);
+  const [, setVoicesReady] = useState(false);
 const [micRunning, setMicRunning] = useState(false);
 
   const currentQuestion = questions?.[currentIndex];
@@ -45,21 +45,27 @@ useEffect(() => {
   aiPlayingRef.current = isAIPlaying;
 }, [isAIPlaying]);
 
+const getPreferredVoice = () => {
+  if (!("speechSynthesis" in window)) return null;
+
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  return (
+    voices.find((voice) => voice.default) ||
+    voices.find((voice) => voice.lang?.startsWith("en")) ||
+    voices[0]
+  );
+};
 
 useEffect(() => {
   let mounted = true;
 
   const loadVoices = () => {
-    const voices = speechSynthesis.getVoices();
+    const femaleVoice = getPreferredVoice();
 
-    if (!voices.length) return;
-
+    if (!femaleVoice) return;
     if (!mounted) return;
-
-    const femaleVoice =
-      voices.find(v => v.default) ||
-      voices.find(v => v.lang.startsWith("en")) ||
-      voices[0];
 
     console.log("Voice Loaded:", femaleVoice?.name);
 
@@ -85,8 +91,8 @@ const videoSource = femaleVideo;
 const speakText = (text) => {
     console.log("🟢 speakText called:", Date.now());
   return new Promise((resolve) => {
-    if (!voicesReady || !selectedVoice) {
-      console.log("Voice not ready");
+    if (!("speechSynthesis" in window)) {
+      console.log("Speech synthesis not supported");
       resolve();
       return;
     }
@@ -99,12 +105,13 @@ const speakText = (text) => {
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
+    const voice = selectedVoice || getPreferredVoice();
 
   utterance.lang = "en-US";
 
 // Only assign the voice if one was found
-if (selectedVoice) {
-  utterance.voice = selectedVoice;
+if (voice) {
+  utterance.voice = voice;
 }
     utterance.rate = 0.92;
     utterance.pitch = 1.05;
@@ -167,10 +174,6 @@ window.speechSynthesis.speak(utterance);
   });
 };
 useEffect(() => {
-  if (!voicesReady || !selectedVoice) {
-    return;
-  }
-
   const runIntro = async () => {
     if (isIntroPhase) {
       await speakText(
@@ -199,7 +202,7 @@ useEffect(() => {
   };
 
   runIntro();
-}, [selectedVoice, isIntroPhase, currentIndex]);
+}, [isIntroPhase, currentIndex]);
 
   {
     /*Timer logic*/
