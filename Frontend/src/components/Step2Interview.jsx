@@ -24,9 +24,11 @@ function Step2Interview({
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-const [isRecognitionRunning, setIsRecognitionRunning] = useState(false);
+
   const [subtitle, setSubtitle] = useState("");
   const videoRef = useRef(null);
+  const [voicesReady, setVoicesReady] = useState(false);
+const [micRunning, setMicRunning] = useState(false);
 
   const currentQuestion = questions?.[currentIndex];
 
@@ -55,130 +57,201 @@ const [isRecognitionRunning, setIsRecognitionRunning] = useState(false);
 // }, []);
 
 useEffect(() => {
-  let cancelled = false;
+  let mounted = true;
 
   const loadVoices = () => {
     const voices = speechSynthesis.getVoices();
 
     if (!voices.length) {
-      setTimeout(loadVoices, 100);
+      setTimeout(loadVoices, 200);
       return;
     }
 
-    if (cancelled) return;
+    if (!mounted) return;
 
     const femaleVoice =
       voices.find(v => v.name.toLowerCase().includes("female")) ||
       voices.find(v => v.name.toLowerCase().includes("samantha")) ||
       voices.find(v => v.name.toLowerCase().includes("zira")) ||
-      voices.find(v => v.lang === "en-US") ||
+      voices.find(v => v.lang.startsWith("en")) ||
       voices[0];
 
+    console.log("Voice Loaded:", femaleVoice?.name);
+
     setSelectedVoice(femaleVoice);
+    setVoicesReady(true);
   };
 
   loadVoices();
 
   return () => {
-    cancelled = true;
+    mounted = false;
+    speechSynthesis.cancel();
   };
 }, []);
 const videoSource = femaleVideo;
 
-  const speakText = (text) => {
-    return new Promise((resolve) => {
-      if (!window.speechSynthesis || !selectedVoice) {
-        resolve();
-        return;
-      }
+//   const speakText = (text) => {
+//     return new Promise((resolve) => {
+//       if (!window.speechSynthesis || !selectedVoice) {
+//         resolve();
+//         return;
+//       }
 
-      window.speechSynthesis.cancel();
+//       window.speechSynthesis.cancel();
 
- const humanText = text
-  .replace(/,/g, ", ")
-  .replace(/\./g, ". ")
-  .replace(/\?/g, "? ")
-  .replace(/!/g, "! ");
+//  const humanText = text
+//   .replace(/,/g, ", ")
+//   .replace(/\./g, ". ")
+//   .replace(/\?/g, "? ")
+//   .replace(/!/g, "! ");
 
-const utterance = new SpeechSynthesisUtterance(humanText);
+// const utterance = new SpeechSynthesisUtterance(humanText);
 
-utterance.voice = selectedVoice;
-utterance.rate = 0.8;      // slower
-utterance.pitch = 1.05;    // slightly softer
-utterance.volume = 1;
+// utterance.voice = selectedVoice;
+// utterance.rate = 0.8;      // slower
+// utterance.pitch = 1.05;    // slightly softer
+// utterance.volume = 1;
 
-if (selectedVoice.lang) {
-  utterance.lang = selectedVoice.lang;
-}
+// if (selectedVoice.lang) {
+//   utterance.lang = selectedVoice.lang;
+// }
 
-      utterance.onstart = () => {
-        setIsAIPlaying(true);
-        stopMic();
+//       utterance.onstart = () => {
+//         setIsAIPlaying(true);
+//         stopMic();
 
-        videoRef.current?.play();
-      };
+//         videoRef.current?.play();
+//       };
 
-   utterance.onend = () => {
-  setIsAIPlaying(false);
+//    utterance.onend = () => {
+//   setIsAIPlaying(false);
 
-  if (videoRef.current) {
-    videoRef.current.pause();
-    videoRef.current.currentTime = 0;
-  }
-if (isMicOn) {
-  setTimeout(() => {
-    startMic();
-  }, 400);
-}
+//   if (videoRef.current) {
+//     videoRef.current.pause();
+//     videoRef.current.currentTime = 0;
+//   }
+// if (isMicOn) {
+//   setTimeout(() => {
+//     startMic();
+//   }, 400);
+// }
 
-  setTimeout(() => {
-    setSubtitle("");
-    resolve();
-  }, 300);
-};
-      setSubtitle(text);
-      // window.speechSynthesis.speak(utterance);
-      window.speechSynthesis.cancel();
+//   setTimeout(() => {
+//     setSubtitle("");
+//     resolve();
+//   }, 300);
+// };
+//       setSubtitle(text);
+//       // window.speechSynthesis.speak(utterance);
+//       window.speechSynthesis.cancel();
 
-setTimeout(() => {
-  window.speechSynthesis.speak(utterance);
-}, 100);
-    });
-  };
+// setTimeout(() => {
+//   window.speechSynthesis.speak(utterance);
+// }, 100);
+//     });
+//   };
 
-  useEffect(() => {
-    if (!selectedVoice) {
+const speakText = (text) => {
+  return new Promise((resolve) => {
+    if (!voicesReady || !selectedVoice) {
+      console.log("Voice not ready");
+      resolve();
       return;
     }
 
-    const runIntro = async () => {
-      if (isIntroPhase) {
-        await speakText(
-          `Hi ${userName}, welcome! It's great to meet you. I hope you're ready to begin.`,
-        );
+    stopMic();
 
-        await speakText(
-          "I'll ask you a few questions. Answer naturally, take your time, and do your best. Let's begin.",
-        );
+    speechSynthesis.cancel();
 
-        setIsIntroPhase(false);
-      } else if (currentQuestion) {
-        await new Promise((r) => setTimeout(r, 250));
+    const utterance = new SpeechSynthesisUtterance(text);
 
-        // If last question (hard level)
+    utterance.voice = selectedVoice;
+    utterance.lang = selectedVoice.lang || "en-US";
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
-        if (currentIndex === questions.length - 1) {
-          await speakText(
-            "Alright, this one might be a bit more challenging. ",
-          );
-        }
+    utterance.onstart = () => {
+      console.log("Speech Started");
 
-        await speakText(currentQuestion.question);
+      setSubtitle(text);
+      setIsAIPlaying(true);
+
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.play().catch(() => {});
       }
     };
 
-    runIntro();
-  }, [selectedVoice, isIntroPhase, currentIndex]);
+    utterance.onend = () => {
+      console.log("Speech Finished");
+
+      setIsAIPlaying(false);
+
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+
+      setTimeout(() => {
+        if (isMicOn) {
+          startMic();
+        }
+
+        setSubtitle("");
+
+        resolve();
+      }, 500);
+    };
+
+    utterance.onerror = (e) => {
+      console.log("Speech Error:", e);
+
+      setIsAIPlaying(false);
+
+      resolve();
+    };
+
+    setTimeout(() => {
+      speechSynthesis.speak(utterance);
+    }, 200);
+  });
+};
+
+useEffect(() => {
+  if (!voicesReady || !selectedVoice) {
+    return;
+  }
+
+  const runIntro = async () => {
+    if (isIntroPhase) {
+      await speakText(
+        `Hi ${userName}, welcome! It's great to meet you. I hope you're ready to begin.`,
+      );
+
+      await speakText(
+        "I'll ask you a few questions. Answer naturally, take your time, and do your best. Let's begin.",
+      );
+
+      setIsIntroPhase(false);
+    } else if (currentQuestion) {
+      await new Promise((r) => setTimeout(r, 250));
+
+      // If last question (hard level)
+
+      if (currentIndex === questions.length - 1) {
+        await speakText(
+          "Alright, this one might be a bit more challenging. ",
+        );
+      }
+
+      await speakText(currentQuestion.question);
+    }
+  };
+
+  runIntro();
+}, [selectedVoice, isIntroPhase, currentIndex]);
 
   {
     /*Timer logic*/
@@ -200,38 +273,82 @@ setTimeout(() => {
     return () => clearInterval(timer);
   }, [isIntroPhase, currentIndex]);
 
-  useEffect(() => {
-    if (!("webkitSpeechRecognition" in window)) return;
+//   useEffect(() => {
+//     if (!("webkitSpeechRecognition" in window)) return;
 
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.onstart = () => {
-  setIsRecognitionRunning(true);
-};
+//     const recognition = new window.webkitSpeechRecognition();
+//     recognition.onstart = () => {
+//   setIsRecognitionRunning(true);
+// };
 
-recognition.onend = () => {
-  setIsRecognitionRunning(false);
-};
+// recognition.onend = () => {
+//   setIsRecognitionRunning(false);
+// };
 
-recognition.onerror = (e) => {
-  console.log("Recognition error:", e.error);
-  setIsRecognitionRunning(false);
-};
-    recognition.lang = "en-US";
-    recognition.continuous = true;
-    recognition.interimResults = false;
+// recognition.onerror = (e) => {
+//   console.log("Recognition error:", e.error);
+//   setIsRecognitionRunning(false);
+// };
+//     recognition.lang = "en-US";
+//     recognition.continuous = true;
+//     recognition.interimResults = false;
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[event.results.length - 1][0].transcript;
+//     recognition.onresult = (event) => {
+//       const transcript = event.results[event.results.length - 1][0].transcript;
 
-      setAnswer((prev) => {
-        const updated = prev + " " + transcript;
-        console.log("Updated Answer:", updated);
-        return updated;
-      });
-    };
+//       setAnswer((prev) => {
+//         const updated = prev + " " + transcript;
+//         console.log("Updated Answer:", updated);
+//         return updated;
+//       });
+//     };
 
-    recognitionRef.current = recognition;
-  }, []);
+//     recognitionRef.current = recognition;
+//   }, []);
+
+
+useEffect(() => {
+  if (!window.webkitSpeechRecognition) return;
+
+  const recognition = new window.webkitSpeechRecognition();
+
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    console.log("Mic Started");
+    setMicRunning(true);
+  };
+
+  recognition.onend = () => {
+    console.log("Mic Ended");
+    setMicRunning(false);
+  };
+
+  recognition.onerror = (e) => {
+    console.log("Recognition Error:", e.error);
+    setMicRunning(false);
+  };
+
+  recognition.onresult = (event) => {
+    let finalTranscript = "";
+
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      finalTranscript += event.results[i][0].transcript + " ";
+    }
+
+    setAnswer(prev => prev + finalTranscript);
+  };
+
+  recognitionRef.current = recognition;
+
+  return () => {
+    recognition.stop();
+    recognition.abort();
+  };
+}, []);
+
 
   // const startMic = () => {
   //   if (recognitionRef.current && !isAIPlaying) {
@@ -242,19 +359,17 @@ recognition.onerror = (e) => {
   //     }
   //   }
   // };
-  const startMic = () => {
-  if (
-    !recognitionRef.current ||
-    isAIPlaying ||
-    isRecognitionRunning
-  ) {
-    return;
-  }
+const startMic = () => {
+  if (!recognitionRef.current) return;
+
+  if (isAIPlaying) return;
+
+  if (micRunning) return;
 
   try {
     recognitionRef.current.start();
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    console.log("Mic start skipped:", err.message);
   }
 };
 
@@ -264,13 +379,15 @@ recognition.onerror = (e) => {
   //   }
   // };
 
-  const stopMic = () => {
+const stopMic = () => {
   if (!recognitionRef.current) return;
 
   try {
     recognitionRef.current.stop();
     recognitionRef.current.abort();
-  } catch (e) {}
+  } catch (err) {
+    console.log(err);
+  }
 };
 
   const toggleMic = () => {
