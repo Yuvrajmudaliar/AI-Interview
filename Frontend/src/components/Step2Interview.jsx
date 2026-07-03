@@ -52,18 +52,14 @@ useEffect(() => {
   const loadVoices = () => {
     const voices = speechSynthesis.getVoices();
 
-    if (!voices.length) {
-      setTimeout(loadVoices, 200);
-      return;
-    }
+    if (!voices.length) return;
 
     if (!mounted) return;
 
     const femaleVoice =
-  voices.find(v => v.name === "Google US English") ||
-  voices.find(v => v.name === "Microsoft David - English (United States)") ||
-  voices.find(v => v.lang === "en-US") ||
-  voices[0];
+      voices.find(v => v.default) ||
+      voices.find(v => v.lang.startsWith("en")) ||
+      voices[0];
 
     console.log("Voice Loaded:", femaleVoice?.name);
 
@@ -71,10 +67,15 @@ useEffect(() => {
     setVoicesReady(true);
   };
 
+  // Try immediately
   loadVoices();
+
+  // Also listen for Chrome when voices load later
+  speechSynthesis.onvoiceschanged = loadVoices;
 
   return () => {
     mounted = false;
+    speechSynthesis.onvoiceschanged = null;
     speechSynthesis.cancel();
   };
 }, []);
@@ -99,8 +100,12 @@ const speakText = (text) => {
 
     const utterance = new SpeechSynthesisUtterance(text);
 
-    utterance.voice = selectedVoice;
-    utterance.lang = selectedVoice.lang || "en-US";
+  utterance.lang = "en-US";
+
+// Only assign the voice if one was found
+if (selectedVoice) {
+  utterance.voice = selectedVoice;
+}
     utterance.rate = 0.92;
     utterance.pitch = 1.05;
     utterance.volume = 1;
@@ -153,9 +158,10 @@ const speakText = (text) => {
     };
 
     console.time("Speech");
-    speechSynthesis.cancel();
+if (window.speechSynthesis.speaking) {
+  window.speechSynthesis.cancel();
+}
 
-await new Promise(resolve => setTimeout(resolve, 100));
 window.speechSynthesis.resume();
 window.speechSynthesis.speak(utterance);
   });
