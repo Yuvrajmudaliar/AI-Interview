@@ -7,7 +7,7 @@ import { serverUrl } from "../App";
 import axios from "axios";
 import { BsArrowRight } from "react-icons/bs";
 
-// function Step2Interview({ interviewData, onFinish }) {
+
 function Step2Interview({
   interviewData,
   onFinish
@@ -32,29 +32,7 @@ const [micRunning, setMicRunning] = useState(false);
 
   const currentQuestion = questions?.[currentIndex];
 
-// useEffect(() => {
-//   const loadVoices = () => {
-//     const voices = window.speechSynthesis.getVoices();
 
-//     if (!voices.length) return;
-
-//     const femaleVoice =
-//       voices.find((v) => v.name.toLowerCase().includes("female")) ||
-//       voices.find((v) => v.name.toLowerCase().includes("samantha")) ||
-//       voices.find((v) => v.name.toLowerCase().includes("zira")) ||
-//       voices.find((v) => v.lang === "en-US") ||
-//       voices[0];
-
-//     setSelectedVoice(femaleVoice);
-//   };
-
-//   loadVoices();
-//   window.speechSynthesis.onvoiceschanged = loadVoices;
-
-//   return () => {
-//     window.speechSynthesis.onvoiceschanged = null;
-//   };
-// }, []);
 
 useEffect(() => {
   let mounted = true;
@@ -91,66 +69,6 @@ useEffect(() => {
 }, []);
 const videoSource = femaleVideo;
 
-//   const speakText = (text) => {
-//     return new Promise((resolve) => {
-//       if (!window.speechSynthesis || !selectedVoice) {
-//         resolve();
-//         return;
-//       }
-
-//       window.speechSynthesis.cancel();
-
-//  const humanText = text
-//   .replace(/,/g, ", ")
-//   .replace(/\./g, ". ")
-//   .replace(/\?/g, "? ")
-//   .replace(/!/g, "! ");
-
-// const utterance = new SpeechSynthesisUtterance(humanText);
-
-// utterance.voice = selectedVoice;
-// utterance.rate = 0.8;      // slower
-// utterance.pitch = 1.05;    // slightly softer
-// utterance.volume = 1;
-
-// if (selectedVoice.lang) {
-//   utterance.lang = selectedVoice.lang;
-// }
-
-//       utterance.onstart = () => {
-//         setIsAIPlaying(true);
-//         stopMic();
-
-//         videoRef.current?.play();
-//       };
-
-//    utterance.onend = () => {
-//   setIsAIPlaying(false);
-
-//   if (videoRef.current) {
-//     videoRef.current.pause();
-//     videoRef.current.currentTime = 0;
-//   }
-// if (isMicOn) {
-//   setTimeout(() => {
-//     startMic();
-//   }, 400);
-// }
-
-//   setTimeout(() => {
-//     setSubtitle("");
-//     resolve();
-//   }, 300);
-// };
-//       setSubtitle(text);
-//       // window.speechSynthesis.speak(utterance);
-//       window.speechSynthesis.cancel();
-
-// setTimeout(() => {
-//   window.speechSynthesis.speak(utterance);
-// }, 100);
-//     });
-//   };
 
 const speakText = (text) => {
   return new Promise((resolve) => {
@@ -168,8 +86,8 @@ const speakText = (text) => {
 
     utterance.voice = selectedVoice;
     utterance.lang = selectedVoice.lang || "en-US";
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
+    utterance.rate = 0.92;
+    utterance.pitch = 1.05;
     utterance.volume = 1;
 
     utterance.onstart = () => {
@@ -273,38 +191,7 @@ useEffect(() => {
     return () => clearInterval(timer);
   }, [isIntroPhase, currentIndex]);
 
-//   useEffect(() => {
-//     if (!("webkitSpeechRecognition" in window)) return;
 
-//     const recognition = new window.webkitSpeechRecognition();
-//     recognition.onstart = () => {
-//   setIsRecognitionRunning(true);
-// };
-
-// recognition.onend = () => {
-//   setIsRecognitionRunning(false);
-// };
-
-// recognition.onerror = (e) => {
-//   console.log("Recognition error:", e.error);
-//   setIsRecognitionRunning(false);
-// };
-//     recognition.lang = "en-US";
-//     recognition.continuous = true;
-//     recognition.interimResults = false;
-
-//     recognition.onresult = (event) => {
-//       const transcript = event.results[event.results.length - 1][0].transcript;
-
-//       setAnswer((prev) => {
-//         const updated = prev + " " + transcript;
-//         console.log("Updated Answer:", updated);
-//         return updated;
-//       });
-//     };
-
-//     recognitionRef.current = recognition;
-//   }, []);
 
 
 useEffect(() => {
@@ -350,15 +237,7 @@ useEffect(() => {
 }, []);
 
 
-  // const startMic = () => {
-  //   if (recognitionRef.current && !isAIPlaying) {
-  //     try {
-  //       recognitionRef.current.start();
-  //     } catch (error) {
-  //       console.error(`Speech recognition already started Error ${error}`);
-  //     }
-  //   }
-  // };
+ 
 const startMic = () => {
   if (!recognitionRef.current) return;
 
@@ -373,11 +252,7 @@ const startMic = () => {
   }
 };
 
-  // const stopMic = () => {
-  //   if (recognitionRef.current) {
-  //     recognitionRef.current.stop();
-  //   }
-  // };
+
 
 const stopMic = () => {
   if (!recognitionRef.current) return;
