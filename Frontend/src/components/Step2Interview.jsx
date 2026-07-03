@@ -128,14 +128,14 @@ const speakText = (text) => {
         videoRef.current.currentTime = 0;
       }
 
-      setTimeout(() => {
+      
         if (micOnRef.current) {
           startMic();
         }
 
-        setSubtitle("");
-        resolve();
-      }, 300);
+         setSubtitle("");
+  resolve();
+      
     };
 
     utterance.onerror = (e) => {
@@ -152,11 +152,8 @@ const speakText = (text) => {
       resolve();
     };
 
-    // Speak only once
-    setTimeout(() => {
-      console.time("Speech");
-      speechSynthesis.speak(utterance);
-    }, 200);
+    console.time("Speech");
+speechSynthesis.speak(utterance);
   });
 };
 useEffect(() => {
@@ -175,11 +172,9 @@ useEffect(() => {
       );
 
       setIsIntroPhase(false);
-      setTimeout(() => {
   startMic();
-}, 500);
     } else if (currentQuestion) {
-      await new Promise((r) => setTimeout(r, 250));
+      
 
       // If last question (hard level)
 
