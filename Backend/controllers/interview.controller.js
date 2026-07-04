@@ -314,11 +314,11 @@ export const submitAnswer = async (req, res) => {
         question.feedback = "You did not submit an answer.";
         question.answer = "";
         question.howToAnswer = await generateInterviewReadyAnswer(question.question, "");
-
+       console.log("Saving answer:", question.answer);
         await interview.save();
-        console.log(
-  "Saved answer:",
-  check.questions[questionIndex].answer
+console.log(
+  "Saved in DB:",
+  verify.questions[questionIndex].answer
 );
 
         return res.json({
