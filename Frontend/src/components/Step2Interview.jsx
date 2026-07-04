@@ -37,6 +37,7 @@ const [micRunning, setMicRunning] = useState(false);
 const aiPlayingRef = useRef(false);
 const micRunningRef = useRef(false);
 const micPermissionRequestedRef = useRef(false);
+const selectedVoiceRef = useRef(null);
 
 
 useEffect(() => {
@@ -80,19 +81,19 @@ const isLikelyMaleVoice = (voice) => {
   return maleVoiceNames.some((maleName) => name.includes(maleName));
 };
 
-const getPreferredVoice = () => {
+const getPreferredVoice = (availableVoices) => {
   if (!("speechSynthesis" in window)) return null;
 
-  const voices = window.speechSynthesis.getVoices();
+  const voices = availableVoices || window.speechSynthesis.getVoices();
   if (!voices.length) return null;
   const englishVoices = voices.filter((voice) => voice.lang?.startsWith("en"));
 
 return (
   englishVoices.find(isLikelyFemaleVoice) ||
   voices.find(isLikelyFemaleVoice) ||
-  voices.find((voice) => voice.default) ||
   englishVoices.find((voice) => !isLikelyMaleVoice(voice)) ||
   englishVoices[0] ||
+  voices.find((voice) => voice.default) ||
   voices[0]
 );
 };
@@ -110,6 +111,7 @@ useEffect(() => {
 
     console.log("Voice Loaded:", femaleVoice?.name);
 
+    selectedVoiceRef.current = femaleVoice;
     setSelectedVoice(femaleVoice);
     setVoicesReady(true);
   };
@@ -127,6 +129,23 @@ useEffect(() => {
   };
 }, []);
 const videoSource = femaleVideo;
+
+const playAiVideo = () => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  video.play().catch((error) => {
+    console.log("Video play error:", error);
+  });
+};
+
+const pauseAiVideo = () => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  video.pause();
+  video.currentTime = 0;
+};
 
 const waitForVoices = () =>
   new Promise((resolve) => {
@@ -163,6 +182,12 @@ const waitForVoices = () =>
   stopMic();
 
   const voices = await waitForVoices();
+  const preferredVoice = getPreferredVoice(voices);
+
+  if (preferredVoice) {
+    selectedVoiceRef.current = preferredVoice;
+    setSelectedVoice(preferredVoice);
+  }
 
   if (speechSynthesis.speaking || speechSynthesis.pending) {
     speechSynthesis.cancel();
@@ -171,8 +196,11 @@ const waitForVoices = () =>
   const utterance = new SpeechSynthesisUtterance(text);
 
   const voice =
+    selectedVoiceRef.current ||
+    preferredVoice ||
     selectedVoice ||
-    voices.find(v => v.lang === "en-US") ||
+    voices.find((v) => v.lang === "en-US" && isLikelyFemaleVoice(v)) ||
+    voices.find((v) => v.lang?.startsWith("en") && !isLikelyMaleVoice(v)) ||
     voices[0];
 
   if (voice) utterance.voice = voice;
@@ -191,6 +219,7 @@ const waitForVoices = () =>
 
     setIsAIPlaying(false);
     setSubtitle("");
+    pauseAiVideo();
 
     if (micOnRef.current) {
       startMic();
@@ -203,6 +232,7 @@ const waitForVoices = () =>
     console.log("🎙️ Speech Started");
     setSubtitle(text);
     setIsAIPlaying(true);
+    playAiVideo();
   };
 
   utterance.onend = () => {
@@ -218,6 +248,7 @@ const waitForVoices = () =>
 
   setSubtitle(text);
   setIsAIPlaying(true);
+  playAiVideo();
 
   setTimeout(() => {
     speechSynthesis.speak(utterance);
@@ -244,6 +275,14 @@ useEffect(() => {
     hasStartedRef.current = true;
 
     requestMicPermission();
+    const voices = await waitForVoices();
+    const preferredVoice = getPreferredVoice(voices);
+
+    if (preferredVoice) {
+      selectedVoiceRef.current = preferredVoice;
+      setSelectedVoice(preferredVoice);
+      setVoicesReady(true);
+    }
 
     setIsIntroPhase(true);
 
@@ -533,6 +572,7 @@ const handleNext = async () => {
               key={videoSource}
               ref={videoRef}
               muted
+              loop
               playsInline
               preload="auto"
               className="w-full aspect-video lg:aspect-auto h-auto object-cover"
