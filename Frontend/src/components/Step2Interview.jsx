@@ -546,12 +546,20 @@ try {
   console.log("After axios");
   console.log(result.data);
 
+  setFeedback(result.data.feedback);
+
+  await speakText(result.data.feedback);
+
+  return true;
+
 } catch (err) {
   console.log("AXIOS ERROR:", err);
-}finally {
-      isSubmittingRef.current = false;
-      setIsSubmitting(false);
-    }
+  return false;
+
+} finally {
+  isSubmittingRef.current = false;
+  setIsSubmitting(false);
+}
   };
 const handleNext = async () => {
   setIsSubmitting(false);   // <-- Add this
