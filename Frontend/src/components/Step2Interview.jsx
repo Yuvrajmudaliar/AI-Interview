@@ -40,6 +40,8 @@ const [micRunning, setMicRunning] = useState(false);
 
   const currentQuestion = questions?.[currentIndex];
  const micOnRef = useRef(true);
+const answerRef = useRef("");
+const isSubmittingRef = useRef(false);
 const aiPlayingRef = useRef(false);
 const micRunningRef = useRef(false);
 const micPermissionRequestedRef = useRef(false);
@@ -58,6 +60,10 @@ useEffect(() => {
 useEffect(() => {
   micRunningRef.current = micRunning;
 }, [micRunning]);
+
+useEffect(() => {
+  answerRef.current = answer;
+}, [answer]);
 
 const femaleVoiceNames = [
   "female",
@@ -382,7 +388,11 @@ useEffect(() => {
     }
 
     if (transcript.trim()) {
-      setAnswer((prev) => `${prev} ${transcript}`.replace(/\s+/g, " ").trim());
+      setAnswer((prev) => {
+        const nextAnswer = `${prev} ${transcript}`.replace(/\s+/g, " ").trim();
+        answerRef.current = nextAnswer;
+        return nextAnswer;
+      });
     }
   };
 
@@ -488,11 +498,14 @@ function stopMic() {
 };
 
   const submitAnswer = async () => {
-    if (isSubmitting) return false;
+    if (isSubmittingRef.current) return false;
 
     stopMic();
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
+    const submittedAnswer = answerRef.current;
 
     try {
       const result = await axios.post(
@@ -500,7 +513,7 @@ function stopMic() {
         {
           interviewId,
           questionIndex: currentIndex,
-          answer,
+          answer: submittedAnswer,
           timeTaken: currentQuestion.timeLimit - timeLeft,
         },
         { withCredentials: true },
@@ -514,6 +527,7 @@ function stopMic() {
       console.log(error);
       return false;
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -526,6 +540,7 @@ const handleNext = async () => {
   }
 
   setAnswer("");
+  answerRef.current = "";
   setFeedback("");
 
   if (currentIndex === 3) {
@@ -687,7 +702,10 @@ const handleNext = async () => {
           {/* Answer */}
           <textarea
             value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
+            onChange={(e) => {
+              answerRef.current = e.target.value;
+              setAnswer(e.target.value);
+            }}
             placeholder="Type your answer here..."
             className="w-full min-h-44 sm:min-h-[220px] lg:flex-1 bg-[#f9f5ef] p-4 sm:p-6 rounded-2xl resize-none outline-none border
              border-[#eaded1] focus:ring-2 focus:ring-[#9b3d55] transition text-[#202124]"

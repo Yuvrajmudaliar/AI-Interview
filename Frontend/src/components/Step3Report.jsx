@@ -114,7 +114,7 @@ function Step3Report({ report }) {
         q.answer || "No answer submitted.",
         `${q.score ?? 0}/10 - ${q.feedback || "No feedback available."}`,
         q.howToAnswer ||
-          "I have a clear understanding of this topic and can explain it with practical context. In a real project, I would focus on the main requirement, communicate my approach clearly, and connect my answer to the role and responsibilities.",
+          "I understand the main requirement behind this question and can connect it to practical work. My focus is to explain the concept clearly, show where I have applied it, and highlight the value it brings in a real project.",
       ]),
       styles: {
         fontSize: 8,
@@ -330,7 +330,7 @@ text-sm sm:text-base"
                     <p className="text-sm text-[#3e3a36] leading-relaxed break-words">
                       {q.howToAnswer && q.howToAnswer.trim() !== ""
                         ? q.howToAnswer
-                        : "I have a clear understanding of this topic and can explain it with practical context. In a real project, I would focus on the main requirement, communicate my approach clearly, and connect my answer to the role and responsibilities."}
+                        : "I understand the main requirement behind this question and can connect it to practical work. My focus is to explain the concept clearly, show where I have applied it, and highlight the value it brings in a real project."}
                     </p>
                   </div>
                   </div>
