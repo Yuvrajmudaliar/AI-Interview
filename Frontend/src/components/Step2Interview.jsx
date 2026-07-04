@@ -26,6 +26,7 @@ function Step2Interview({
   const [interviewRating, setInterviewRating] = useState(0);
   const [interviewComment, setInterviewComment] = useState("");
   const [ratingError, setRatingError] = useState("");
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -505,6 +506,9 @@ function stopMic() {
 
       setFeedback(result.data.feedback);
       await speakText(result.data.feedback);
+      if (isLastQuestion) {
+        setShowFeedbackModal(true);
+      }
 
       return true;
     } catch (error) {
@@ -530,13 +534,20 @@ const handleNext = async () => {
     return;
   }
 
-  await speakText("Alright, let's move to the next question.");
+  if (currentIndex === 3) {
+    await speakText("Alright, let's move on to the next question.");
+    await speakText(
+      "Now we're moving to a slightly more challenging question, so take your time and answer confidently."
+    );
+  } else {
+    await speakText("Alright, let's move on to the next question.");
+  }
 
   setCurrentIndex((prev) => prev + 1);
 };
 
-  const finishInterview = async () => {
-    if (interviewRating === 0) {
+  const finishInterview = async ({ requireRating = true } = {}) => {
+    if (requireRating && interviewRating === 0) {
       setRatingError("Please select a star rating to finish the interview.");
       return;
     }
@@ -735,27 +746,27 @@ const handleNext = async () => {
         </div>
       </div>
 
-      {feedback && isLastQuestion && (
+      {showFeedbackModal && isLastQuestion && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#202124]/60 px-4 py-6 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl shadow-[#202124]/30 border border-[#eaded1]"
+            className="w-full max-w-xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-[#202124]/30 border border-[#eaded1]"
           >
-            <div className="bg-[#7a2f43] px-6 py-5 text-white">
+            <div className="bg-[#7a2f43] px-6 py-6 text-white">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#f0c36a]">
-                Final Step
+                Interview Complete
               </p>
-              <h3 className="mt-2 text-2xl font-bold leading-tight">
-                Rate your interview experience
+              <h3 className="mt-2 text-2xl sm:text-3xl font-bold leading-tight">
+                Share your final feedback
               </h3>
               <p className="mt-2 text-sm text-[#f7e8df]">
-                Your rating helps us improve the AI interview experience.
+                Your response has been reviewed. Add a quick rating or jump straight to your report.
               </p>
             </div>
 
             <div className="p-6">
-              <div className="mb-5 rounded-2xl border border-[#eaded1] bg-[#f9f5ef] p-4">
+              <div className="mb-5 rounded-2xl border border-[#eaded1] bg-[#f9f5ef] p-5">
                 <p className="text-sm font-semibold text-[#202124]">
                   How was your interview?
                 </p>
@@ -798,12 +809,20 @@ const handleNext = async () => {
                 className="w-full min-h-28 rounded-2xl border border-[#eaded1] bg-white p-4 text-sm text-[#202124] outline-none resize-none transition focus:ring-2 focus:ring-[#9b3d55]"
               />
 
-              <button
-                onClick={handleNext}
-                className="mt-5 w-full rounded-2xl bg-[#7a2f43] px-5 py-4 font-semibold text-white shadow-lg shadow-[#7a2f43]/20 transition hover:bg-[#642638]"
-              >
-                Submit Feedback & View Report
-              </button>
+              <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  onClick={() => finishInterview({ requireRating: true })}
+                  className="rounded-2xl bg-[#7a2f43] px-5 py-4 font-semibold text-white shadow-lg shadow-[#7a2f43]/20 transition hover:bg-[#642638]"
+                >
+                  Submit Feedback
+                </button>
+                <button
+                  onClick={() => finishInterview({ requireRating: false })}
+                  className="rounded-2xl border border-[#eaded1] bg-white px-5 py-4 font-semibold text-[#7a2f43] shadow-sm transition hover:bg-[#f9f5ef]"
+                >
+                  View Report
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>

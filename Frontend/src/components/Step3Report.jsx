@@ -107,7 +107,7 @@ function Step3Report({ report }) {
     autoTable(doc, {
       startY: currentY,
       margin: { left: margin, right: margin },
-      head: [["#", "Question", "User Answer", "AI Feedback", "Correct Answer"]],
+      head: [["#", "Question", "User Answer", "AI Feedback", "Correct Answer", "How To Answer"]],
       body: questionWiseScore.map((q, i) => [
         i + 1,
         q.question || "Question not available",
@@ -115,6 +115,8 @@ function Step3Report({ report }) {
         `${q.score ?? 0}/10 - ${q.feedback || "No feedback available."}`,
         q.correctAnswer ||
           "A correct interview answer should directly address the question, explain the main concept clearly, and include a professional example.",
+        q.howToAnswer ||
+          "I would answer this by clearly stating the main point, explaining why it matters, and connecting it to one practical example from my experience.",
       ]),
       styles: {
         fontSize: 8,
@@ -127,11 +129,12 @@ function Step3Report({ report }) {
         halign: "center",
       },
       columnStyles: {
-        0: { cellWidth: 10, halign: "center" },
-        1: { cellWidth: 42 },
-        2: { cellWidth: 42 },
-        3: { cellWidth: 36 },
-        4: { cellWidth: 52 },
+        0: { cellWidth: 8, halign: "center" },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 30 },
+        3: { cellWidth: 28 },
+        4: { cellWidth: 42 },
+        5: { cellWidth: 42 },
       },
       alternateRowStyles: {
         fillColor: [249, 250, 251],
@@ -331,6 +334,17 @@ text-sm sm:text-base"
                       {q.correctAnswer && q.correctAnswer.trim() !== ""
                         ? q.correctAnswer
                         : "A correct interview answer should directly address the question, explain the main concept clearly, and include a professional example."}
+                    </p>
+                  </div>
+
+                  <div className="bg-white border border-[#eaded1] p-4 rounded-lg">
+                    <p className="text-xs text-[#9b3d55] font-semibold mb-1">
+                      How To Answer
+                    </p>
+                    <p className="text-sm text-[#3e3a36] leading-relaxed break-words">
+                      {q.howToAnswer && q.howToAnswer.trim() !== ""
+                        ? q.howToAnswer
+                        : "I would answer this by clearly stating the main point, explaining why it matters, and connecting it to one practical example from my experience."}
                     </p>
                   </div>
                   </div>
