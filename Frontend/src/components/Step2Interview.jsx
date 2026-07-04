@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import femaleVideo from "../assets/videos/female-ai.mp4";
 import Timer from "./Timer";
-import { motion } from "motion/react";
-import { FaMicrophone, FaMicrophoneSlash, FaStar } from "react-icons/fa";
+import { AnimatePresence, motion } from "motion/react";
+import { FaCheck, FaMicrophone, FaMicrophoneSlash, FaStar } from "react-icons/fa";
 import { serverUrl } from "../App";
 import axios from "axios";
 import { BsArrowRight } from "react-icons/bs";
@@ -27,6 +27,8 @@ function Step2Interview({
   const [interviewComment, setInterviewComment] = useState("");
   const [ratingError, setRatingError] = useState("");
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [isFinishingInterview, setIsFinishingInterview] = useState(false);
+  const [finishSuccess, setFinishSuccess] = useState(false);
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -506,9 +508,6 @@ function stopMic() {
 
       setFeedback(result.data.feedback);
       await speakText(result.data.feedback);
-      if (isLastQuestion) {
-        setShowFeedbackModal(true);
-      }
 
       return true;
     } catch (error) {
@@ -521,18 +520,13 @@ function stopMic() {
 const handleNext = async () => {
   setIsSubmitting(false);   // <-- Add this
 
-  if (isLastQuestion && interviewRating === 0) {
-    setRatingError("Please select a star rating to finish the interview.");
+  if (currentIndex + 1 >= questions.length) {
+    setShowFeedbackModal(true);
     return;
   }
 
   setAnswer("");
   setFeedback("");
-
-  if (currentIndex + 1 >= questions.length) {
-    finishInterview();
-    return;
-  }
 
   if (currentIndex === 3) {
     await speakText("Alright, let's move on to the next question.");
@@ -554,6 +548,7 @@ const handleNext = async () => {
 
     stopMic();
     setIsMicOn(false);
+    setIsFinishingInterview(true);
     try {
       const result = await axios.post(
         serverUrl + "/api/v1/interview/finish",
@@ -566,9 +561,12 @@ const handleNext = async () => {
       );
 
       console.log(result.data);
+      setFinishSuccess(true);
+      await new Promise((resolve) => setTimeout(resolve, 900));
       onFinish(result.data);
     } catch (error) {
       console.log(error);
+      setIsFinishingInterview(false);
     }
   };
 
@@ -746,87 +744,171 @@ const handleNext = async () => {
         </div>
       </div>
 
-      {showFeedbackModal && isLastQuestion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#202124]/60 px-4 py-6 backdrop-blur-sm">
+      <AnimatePresence>
+        {showFeedbackModal && isLastQuestion && (
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="w-full max-w-xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-[#202124]/30 border border-[#eaded1]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/75 px-3 py-6 backdrop-blur-xl sm:px-6"
           >
-            <div className="bg-[#7a2f43] px-6 py-6 text-white">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#f0c36a]">
-                Interview Complete
-              </p>
-              <h3 className="mt-2 text-2xl sm:text-3xl font-bold leading-tight">
-                Share your final feedback
-              </h3>
-              <p className="mt-2 text-sm text-[#f7e8df]">
-                Your response has been reviewed. Add a quick rating or jump straight to your report.
-              </p>
-            </div>
+            <motion.div
+              className="pointer-events-none absolute left-[8%] top-[12%] h-36 w-36 rounded-full bg-[#7C3AED]/35 blur-3xl sm:h-56 sm:w-56"
+              animate={{ y: [0, -14, 0], scale: [1, 1.08, 1] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="pointer-events-none absolute bottom-[10%] right-[8%] h-40 w-40 rounded-full bg-[#06B6D4]/35 blur-3xl sm:h-64 sm:w-64"
+              animate={{ y: [0, 18, 0], scale: [1.08, 1, 1.08] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="pointer-events-none absolute right-[28%] top-[20%] h-24 w-24 rounded-full bg-[#3B82F6]/30 blur-2xl"
+              animate={{ x: [0, 16, 0], y: [0, -10, 0] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+            />
 
-            <div className="p-6">
-              <div className="mb-5 rounded-2xl border border-[#eaded1] bg-[#f9f5ef] p-5">
-                <p className="text-sm font-semibold text-[#202124]">
-                  How was your interview?
-                </p>
-
-                <div className="mt-4 flex justify-center gap-3">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => {
-                        setInterviewRating(star);
-                        setRatingError("");
-                      }}
-                      className={`rounded-full p-2 text-3xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#9b3d55] ${
-                        star <= interviewRating
-                          ? "bg-[#fff3cf] text-[#f0b83a] shadow-md shadow-[#f0c36a]/20"
-                          : "bg-white text-[#d8c7b9] hover:text-[#f0b83a]"
-                      }`}
-                      aria-label={`Rate ${star} star`}
-                    >
-                      <FaStar />
-                    </button>
-                  ))}
-                </div>
-
-                {ratingError && (
-                  <p className="mt-3 text-center text-sm font-medium text-[#b42318]">
-                    {ratingError}
-                  </p>
-                )}
-              </div>
-
-              <label className="mb-2 block text-sm font-semibold text-[#3e3a36]">
-                Your feedback
-              </label>
-              <textarea
-                value={interviewComment}
-                onChange={(e) => setInterviewComment(e.target.value)}
-                placeholder="Write your feedback here..."
-                className="w-full min-h-28 rounded-2xl border border-[#eaded1] bg-white p-4 text-sm text-[#202124] outline-none resize-none transition focus:ring-2 focus:ring-[#9b3d55]"
+            {[...Array(18)].map((_, index) => (
+              <motion.span
+                key={index}
+                className="pointer-events-none absolute h-2 w-2 rounded-full"
+                style={{
+                  left: `${12 + ((index * 43) % 76)}%`,
+                  top: `${8 + ((index * 29) % 36)}%`,
+                  background:
+                    index % 3 === 0
+                      ? "#7C3AED"
+                      : index % 3 === 1
+                        ? "#3B82F6"
+                        : "#06B6D4",
+                }}
+                initial={{ opacity: 0, y: -20, scale: 0 }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  y: [-20, 90 + (index % 5) * 18],
+                  rotate: [0, 180, 360],
+                  scale: [0, 1, 0.6],
+                }}
+                transition={{
+                  duration: 1.8 + (index % 4) * 0.2,
+                  delay: index * 0.04,
+                  ease: "easeOut",
+                }}
               />
+            ))}
 
-              <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  onClick={() => finishInterview({ requireRating: true })}
-                  className="rounded-2xl bg-[#7a2f43] px-5 py-4 font-semibold text-white shadow-lg shadow-[#7a2f43]/20 transition hover:bg-[#642638]"
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 170, damping: 19 }}
+              className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/45 bg-white/85 shadow-2xl shadow-[#3B82F6]/20 backdrop-blur-2xl"
+            >
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#7C3AED] via-[#3B82F6] to-[#06B6D4]" />
+              <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#7C3AED]/15 blur-2xl" />
+              <div className="absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-[#06B6D4]/15 blur-2xl" />
+
+              <div className="relative p-5 sm:p-8">
+                <motion.div
+                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] text-white shadow-xl shadow-[#3B82F6]/30"
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.1 }}
                 >
-                  Submit Feedback
-                </button>
-                <button
-                  onClick={() => finishInterview({ requireRating: false })}
-                  className="rounded-2xl border border-[#eaded1] bg-white px-5 py-4 font-semibold text-[#7a2f43] shadow-sm transition hover:bg-[#f9f5ef]"
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: finishSuccess ? [1, 1.2, 1] : 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <FaCheck size={34} />
+                  </motion.div>
+                </motion.div>
+
+                <motion.div
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-center"
                 >
-                  View Report
-                </button>
+                  <h3 className="text-3xl font-bold leading-tight text-slate-950 sm:text-4xl">
+                    🎉 Congratulations!
+                  </h3>
+                  <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+                    You've successfully completed your AI interview. Your personalized interview report is ready with AI feedback, performance analysis, and interview-ready answers.
+                  </p>
+                  <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500">
+                    Before viewing your report, we'd love to hear about your experience. Your feedback helps us improve the interview experience for everyone.
+                  </p>
+                </motion.div>
+
+                <div className="mt-7 rounded-3xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-slate-200/70 backdrop-blur-xl sm:p-6">
+                  <p className="text-center text-sm font-semibold text-slate-700">
+                    Rate your interview experience
+                  </p>
+
+                  <div className="mt-4 flex justify-center gap-2 sm:gap-3">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <motion.button
+                        key={star}
+                        type="button"
+                        whileHover={{ y: -4, scale: 1.12 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          setInterviewRating(star);
+                          setRatingError("");
+                        }}
+                        className={`rounded-2xl p-2.5 text-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] sm:p-3 sm:text-3xl ${
+                          star <= interviewRating
+                            ? "bg-gradient-to-br from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] text-white shadow-lg shadow-[#3B82F6]/35"
+                            : "bg-slate-100 text-slate-300 hover:bg-white hover:text-[#7C3AED] hover:shadow-md"
+                        }`}
+                        aria-label={`Rate ${star} star`}
+                      >
+                        <FaStar />
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {ratingError && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-3 text-center text-sm font-medium text-rose-600"
+                    >
+                      {ratingError}
+                    </motion.p>
+                  )}
+
+                  <textarea
+                    value={interviewComment}
+                    onChange={(e) => setInterviewComment(e.target.value)}
+                    placeholder="Tell us what you liked or what we can improve..."
+                    className="mt-5 w-full min-h-28 rounded-2xl border border-slate-200 bg-white/90 p-4 text-sm text-slate-800 shadow-inner shadow-slate-100 outline-none resize-none transition duration-300 placeholder:text-slate-400 focus:border-[#3B82F6] focus:ring-4 focus:ring-[#3B82F6]/15"
+                  />
+
+                  <motion.button
+                    type="button"
+                    disabled={!interviewRating || isFinishingInterview}
+                    onClick={() => finishInterview({ requireRating: true })}
+                    whileHover={interviewRating && !isFinishingInterview ? { y: -2, scale: 1.01 } : undefined}
+                    whileTap={interviewRating && !isFinishingInterview ? { scale: 0.98 } : undefined}
+                    className={`mt-5 w-full rounded-2xl px-5 py-4 text-sm font-bold text-white shadow-xl transition-all duration-300 sm:text-base ${
+                      interviewRating && !isFinishingInterview
+                        ? "bg-gradient-to-r from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] shadow-[#3B82F6]/30 hover:shadow-[#7C3AED]/30"
+                        : "cursor-not-allowed bg-slate-300 shadow-slate-200"
+                    }`}
+                  >
+                    {finishSuccess
+                      ? "Success! Opening Report..."
+                      : isFinishingInterview
+                        ? "Submitting..."
+                        : "⭐ Submit Feedback & View Report"}
+                  </motion.button>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }
