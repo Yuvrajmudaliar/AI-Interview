@@ -25,6 +25,7 @@ function Step2Interview({
   const [feedback, setFeedback] = useState("");
   const [interviewRating, setInterviewRating] = useState(0);
   const [interviewComment, setInterviewComment] = useState("");
+  const [ratingError, setRatingError] = useState("");
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -516,6 +517,11 @@ function stopMic() {
 const handleNext = async () => {
   setIsSubmitting(false);   // <-- Add this
 
+  if (isLastQuestion && interviewRating === 0) {
+    setRatingError("Please select a star rating to finish the interview.");
+    return;
+  }
+
   setAnswer("");
   setFeedback("");
 
@@ -530,6 +536,11 @@ const handleNext = async () => {
 };
 
   const finishInterview = async () => {
+    if (interviewRating === 0) {
+      setRatingError("Please select a star rating to finish the interview.");
+      return;
+    }
+
     stopMic();
     setIsMicOn(false);
     try {
@@ -713,39 +724,6 @@ const handleNext = async () => {
             >
               <p className="text-[#7a2f43] font-medium mb-4">{feedback}</p>
 
-              {isLastQuestion && (
-                <div className="mb-5 rounded-2xl border border-[#eaded1] bg-white p-4 shadow-sm">
-                  <p className="text-sm font-semibold text-[#202124] mb-2">
-                    Rate your interview experience
-                  </p>
-
-                  <div className="flex gap-2 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setInterviewRating(star)}
-                        className={`text-2xl transition ${
-                          star <= interviewRating
-                            ? "text-[#f0c36a]"
-                            : "text-[#d8c7b9] hover:text-[#f0c36a]"
-                        }`}
-                        aria-label={`Rate ${star} star`}
-                      >
-                        <FaStar />
-                      </button>
-                    ))}
-                  </div>
-
-                  <textarea
-                    value={interviewComment}
-                    onChange={(e) => setInterviewComment(e.target.value)}
-                    placeholder="Share your feedback about this interview..."
-                    className="w-full min-h-24 rounded-xl border border-[#eaded1] bg-[#f9f5ef] p-3 text-sm text-[#202124] outline-none focus:ring-2 focus:ring-[#9b3d55] resize-none"
-                  />
-                </div>
-              )}
-
               <button
                 onClick={handleNext}
                 className="w-full bg-[#7a2f43] hover:bg-[#642638] text-white py-3 rounded-xl shadow-md shadow-[#7a2f43]/20 transition flex items-center justify-center gap-1"
@@ -756,6 +734,80 @@ const handleNext = async () => {
           )}
         </div>
       </div>
+
+      {feedback && isLastQuestion && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#202124]/60 px-4 py-6 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl shadow-[#202124]/30 border border-[#eaded1]"
+          >
+            <div className="bg-[#7a2f43] px-6 py-5 text-white">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#f0c36a]">
+                Final Step
+              </p>
+              <h3 className="mt-2 text-2xl font-bold leading-tight">
+                Rate your interview experience
+              </h3>
+              <p className="mt-2 text-sm text-[#f7e8df]">
+                Your rating helps us improve the AI interview experience.
+              </p>
+            </div>
+
+            <div className="p-6">
+              <div className="mb-5 rounded-2xl border border-[#eaded1] bg-[#f9f5ef] p-4">
+                <p className="text-sm font-semibold text-[#202124]">
+                  How was your interview?
+                </p>
+
+                <div className="mt-4 flex justify-center gap-3">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => {
+                        setInterviewRating(star);
+                        setRatingError("");
+                      }}
+                      className={`rounded-full p-2 text-3xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#9b3d55] ${
+                        star <= interviewRating
+                          ? "bg-[#fff3cf] text-[#f0b83a] shadow-md shadow-[#f0c36a]/20"
+                          : "bg-white text-[#d8c7b9] hover:text-[#f0b83a]"
+                      }`}
+                      aria-label={`Rate ${star} star`}
+                    >
+                      <FaStar />
+                    </button>
+                  ))}
+                </div>
+
+                {ratingError && (
+                  <p className="mt-3 text-center text-sm font-medium text-[#b42318]">
+                    {ratingError}
+                  </p>
+                )}
+              </div>
+
+              <label className="mb-2 block text-sm font-semibold text-[#3e3a36]">
+                Your feedback
+              </label>
+              <textarea
+                value={interviewComment}
+                onChange={(e) => setInterviewComment(e.target.value)}
+                placeholder="Write your feedback here..."
+                className="w-full min-h-28 rounded-2xl border border-[#eaded1] bg-white p-4 text-sm text-[#202124] outline-none resize-none transition focus:ring-2 focus:ring-[#9b3d55]"
+              />
+
+              <button
+                onClick={handleNext}
+                className="mt-5 w-full rounded-2xl bg-[#7a2f43] px-5 py-4 font-semibold text-white shadow-lg shadow-[#7a2f43]/20 transition hover:bg-[#642638]"
+              >
+                Submit Feedback & View Report
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

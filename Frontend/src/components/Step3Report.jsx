@@ -107,13 +107,14 @@ function Step3Report({ report }) {
     autoTable(doc, {
       startY: currentY,
       margin: { left: margin, right: margin },
-      head: [["#", "Question", "User Answer", "AI Feedback", "Ideal Answer"]],
+      head: [["#", "Question", "User Answer", "AI Feedback", "Correct Answer"]],
       body: questionWiseScore.map((q, i) => [
         i + 1,
         q.question || "Question not available",
         q.answer || "No answer submitted.",
         `${q.score ?? 0}/10 - ${q.feedback || "No feedback available."}`,
-        q.correctAnswer || "Ideal answer not available.",
+        q.correctAnswer ||
+          "A correct interview answer should directly address the question, explain the main concept clearly, and include a professional example.",
       ]),
       styles: {
         fontSize: 8,
@@ -324,12 +325,12 @@ text-sm sm:text-base"
 
                   <div className="bg-white border border-[#eaded1] p-4 rounded-lg">
                     <p className="text-xs text-[#9b3d55] font-semibold mb-1">
-                      How To Answer
+                      Correct Answer
                     </p>
                     <p className="text-sm text-[#3e3a36] leading-relaxed break-words">
                       {q.correctAnswer && q.correctAnswer.trim() !== ""
                         ? q.correctAnswer
-                        : "A strong answer should be clear, structured, and supported with a practical example."}
+                        : "A correct interview answer should directly address the question, explain the main concept clearly, and include a professional example."}
                     </p>
                   </div>
                   </div>
