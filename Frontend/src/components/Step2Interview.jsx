@@ -508,6 +508,7 @@ function stopMic() {
     const submittedAnswer = answerRef.current;
 
     try {
+      console.log("Current answer:", answerRef.current);
       const result = await axios.post(
         serverUrl + "/api/v1/interview/submit-answer",
         {
