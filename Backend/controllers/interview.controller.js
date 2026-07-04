@@ -294,6 +294,7 @@ User's submitted answer: ${submittedAnswer || "No answer submitted."}
 };
 
 export const submitAnswer = async (req, res) => {
+   console.log("========== SUBMIT ANSWER START ==========");
   try {
     const { interviewId, questionIndex, answer, timeTaken } = req.body
     const submittedAnswer = typeof answer === "string" ? answer : "";
