@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import femaleVideo from "../assets/videos/female-ai.mp4";
 import Timer from "./Timer";
 import { motion } from "motion/react";
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import { FaMicrophone, FaMicrophoneSlash, FaStar } from "react-icons/fa";
 import { serverUrl } from "../App";
 import axios from "axios";
 import { BsArrowRight } from "react-icons/bs";
@@ -23,6 +23,8 @@ function Step2Interview({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [interviewRating, setInterviewRating] = useState(0);
+  const [interviewComment, setInterviewComment] = useState("");
   const [timeLeft, setTimeLeft] = useState(questions?.[0]?.timeLimit || 60);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +40,7 @@ const aiPlayingRef = useRef(false);
 const micRunningRef = useRef(false);
 const micPermissionRequestedRef = useRef(false);
 const selectedVoiceRef = useRef(null);
+const isLastQuestion = currentIndex + 1 >= questions.length;
 
 
 useEffect(() => {
@@ -179,6 +182,8 @@ const waitForVoices = () =>
     return Promise.resolve();
   }
 
+  aiPlayingRef.current = true;
+  setIsAIPlaying(true);
   stopMic();
 
   const voices = await waitForVoices();
@@ -217,12 +222,15 @@ const waitForVoices = () =>
     if (settled) return;
     settled = true;
 
+    aiPlayingRef.current = false;
     setIsAIPlaying(false);
     setSubtitle("");
     pauseAiVideo();
 
     if (micOnRef.current) {
-      startMic();
+      setTimeout(() => {
+        startMic();
+      }, 250);
     }
 
     resolve();
@@ -231,6 +239,7 @@ const waitForVoices = () =>
   utterance.onstart = () => {
     console.log("🎙️ Speech Started");
     setSubtitle(text);
+    aiPlayingRef.current = true;
     setIsAIPlaying(true);
     playAiVideo();
   };
@@ -247,6 +256,7 @@ const waitForVoices = () =>
   };
 
   setSubtitle(text);
+  aiPlayingRef.current = true;
   setIsAIPlaying(true);
   playAiVideo();
 
@@ -349,7 +359,7 @@ useEffect(() => {
 
   recognition.lang = "en-US";
   recognition.continuous = true;
-  recognition.interimResults = true;
+  recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
   recognition.onstart = () => {
@@ -362,10 +372,14 @@ useEffect(() => {
     let transcript = "";
 
     for (let i = event.resultIndex; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript + " ";
+      if (event.results[i].isFinal) {
+        transcript += event.results[i][0].transcript.trim() + " ";
+      }
     }
 
-    setAnswer((prev) => prev + transcript);
+    if (transcript.trim()) {
+      setAnswer((prev) => `${prev} ${transcript}`.replace(/\s+/g, " ").trim());
+    }
   };
 
   recognition.onerror = (e) => {
@@ -523,6 +537,8 @@ const handleNext = async () => {
         serverUrl + "/api/v1/interview/finish",
         {
           interviewId,
+          interviewRating,
+          interviewComment,
         },
         { withCredentials: true },
       );
@@ -697,11 +713,44 @@ const handleNext = async () => {
             >
               <p className="text-[#7a2f43] font-medium mb-4">{feedback}</p>
 
+              {isLastQuestion && (
+                <div className="mb-5 rounded-2xl border border-[#eaded1] bg-white p-4 shadow-sm">
+                  <p className="text-sm font-semibold text-[#202124] mb-2">
+                    Rate your interview experience
+                  </p>
+
+                  <div className="flex gap-2 mb-4">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setInterviewRating(star)}
+                        className={`text-2xl transition ${
+                          star <= interviewRating
+                            ? "text-[#f0c36a]"
+                            : "text-[#d8c7b9] hover:text-[#f0c36a]"
+                        }`}
+                        aria-label={`Rate ${star} star`}
+                      >
+                        <FaStar />
+                      </button>
+                    ))}
+                  </div>
+
+                  <textarea
+                    value={interviewComment}
+                    onChange={(e) => setInterviewComment(e.target.value)}
+                    placeholder="Share your feedback about this interview..."
+                    className="w-full min-h-24 rounded-xl border border-[#eaded1] bg-[#f9f5ef] p-3 text-sm text-[#202124] outline-none focus:ring-2 focus:ring-[#9b3d55] resize-none"
+                  />
+                </div>
+              )}
+
               <button
                 onClick={handleNext}
                 className="w-full bg-[#7a2f43] hover:bg-[#642638] text-white py-3 rounded-xl shadow-md shadow-[#7a2f43]/20 transition flex items-center justify-center gap-1"
               >
-                Next Question <BsArrowRight size={18} />
+                {isLastQuestion ? "Finish Interview" : "Next Question"} <BsArrowRight size={18} />
               </button>
             </motion.div>
           )}
