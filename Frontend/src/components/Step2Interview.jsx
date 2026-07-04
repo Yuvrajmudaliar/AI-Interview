@@ -507,27 +507,48 @@ function stopMic() {
 
     const submittedAnswer = answerRef.current;
 
-    try {
-      console.log("Current answer:", answerRef.current);
-      const result = await axios.post(
-        serverUrl + "/api/v1/interview/submit-answer",
-        {
-          interviewId,
-          questionIndex: currentIndex,
-          answer: submittedAnswer,
-          timeTaken: currentQuestion.timeLimit - timeLeft,
-        },
-        { withCredentials: true },
-      );
+    // try {
+    //   console.log("Current answer:", answerRef.current);
+    //   const result = await axios.post(
+    //     serverUrl + "/api/v1/interview/submit-answer",
+    //     {
+    //       interviewId,
+    //       questionIndex: currentIndex,
+    //       answer: submittedAnswer,
+    //       timeTaken: currentQuestion.timeLimit - timeLeft,
+    //     },
+    //     { withCredentials: true },
+    //   );
 
-      setFeedback(result.data.feedback);
-      await speakText(result.data.feedback);
+    //   setFeedback(result.data.feedback);
+    //   await speakText(result.data.feedback);
 
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    } finally {
+    //   return true;
+    // } catch (error) {
+    //   console.log(error);
+    //   return false;
+    // } 
+    // 
+    console.log("Before axios");
+
+try {
+  const result = await axios.post(
+    serverUrl + "/api/v1/interview/submit-answer",
+    {
+      interviewId,
+      questionIndex: currentIndex,
+      answer: submittedAnswer,
+      timeTaken: currentQuestion.timeLimit - timeLeft,
+    },
+    { withCredentials: true }
+  );
+
+  console.log("After axios");
+  console.log(result.data);
+
+} catch (err) {
+  console.log("AXIOS ERROR:", err);
+}finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
