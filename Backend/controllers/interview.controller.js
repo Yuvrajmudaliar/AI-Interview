@@ -226,20 +226,100 @@ return res.status(500).json({message:` Generate Question Error ${error}`});
     }
 }
 
+const createFallbackInterviewAnswer = (questionText = "") => {
+  const topic = questionText
+    .replace(/[?!.]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+
+  if (topic.includes("project")) {
+    return "In one of my projects, I focused on building a reliable solution with clean structure, practical features, and a smooth user experience. I handled the implementation carefully, tested the important flows, and improved the project based on real issues I found during development.";
+  }
+
+  if (topic.includes("frontend") || topic.includes("react") || topic.includes("ui")) {
+    return "I have worked with frontend development by building responsive, user-friendly interfaces using React, JavaScript, HTML, and CSS. I focus on reusable components, clean state management, API integration, and making sure the interface feels smooth across different screen sizes.";
+  }
+
+  if (topic.includes("backend") || topic.includes("api") || topic.includes("database")) {
+    return "I have experience working with backend concepts such as APIs, database operations, authentication, and server-side logic. I focus on writing reliable endpoints, handling data safely, and making sure the frontend can communicate with the backend smoothly.";
+  }
+
+  if (topic.includes("strength") || topic.includes("weakness") || topic.includes("challenge") || topic.includes("conflict")) {
+    return "I handle professional situations by staying calm, understanding the problem clearly, and communicating openly with the people involved. I try to learn from each situation and use that experience to improve the way I work in future projects.";
+  }
+
+  return "I have practical experience with this area and focus on understanding the requirement clearly before solving the problem. I try to communicate my approach in a simple way, connect it with real work, and show how my skills can help me contribute effectively in the role.";
+};
+
+const generateInterviewReadyAnswer = async (questionText, submittedAnswer = "") => {
+  try {
+    const aiResponse = await askAi([
+      {
+        role: "system",
+        content: `
+Write ONLY a sample interview answer for the given question.
+
+Rules:
+- Natural, professional, conversational, and first-person.
+- Specific to the question.
+- Sounds like a strong candidate speaking directly in a real interview.
+- 2 to 5 concise sentences.
+- Do NOT explain how to answer.
+- Do NOT give tips or meta commentary.
+- Do NOT include phrases like "A correct answer should", "I would answer this by", "You should", or "The candidate should".
+- Do NOT use bullet points.
+
+Return ONLY valid JSON:
+{
+  "howToAnswer": "sample interview answer"
+}
+`
+      },
+      {
+        role: "user",
+        content: `
+Question: ${questionText}
+User's submitted answer: ${submittedAnswer || "No answer submitted."}
+`
+      }
+    ]);
+
+    const parsed = JSON.parse(aiResponse);
+    return parsed.howToAnswer || createFallbackInterviewAnswer(questionText);
+  } catch (error) {
+    console.log("How to answer generation failed:", error);
+    return createFallbackInterviewAnswer(questionText);
+  }
+};
+
 export const submitAnswer = async (req, res) => {
   try {
     const { interviewId, questionIndex, answer, timeTaken } = req.body
+    const submittedAnswer = typeof answer === "string" ? answer : "";
 
     const interview = await Interview.findById(interviewId)
     const question = interview.questions[questionIndex]
 
     // If no answer
-    if (!answer) {
+    if (!submittedAnswer.trim()) {
+        if (question.answer && question.answer.trim()) {
+            return res.json({
+                feedback: question.feedback || "Your answer has already been submitted.",
+                howToAnswer: question.howToAnswer || ""
+            });
+        }
+
         question.score = 0;
         question.feedback = "You did not submit an answer.";
         question.answer = "";
+        question.howToAnswer = await generateInterviewReadyAnswer(question.question, "");
 
         await interview.save();
+        console.log(
+  "Saved answer:",
+  check.questions[questionIndex].answer
+);
 
         return res.json({
             feedback: question.feedback
@@ -249,7 +329,8 @@ export const submitAnswer = async (req, res) => {
 if (timeTaken > question.timeLimit) {
     question.score = 0;
     question.feedback = "Time limit exceeded. Answer not evaluated.";
-    question.answer = answer;
+    question.answer = submittedAnswer;
+    question.howToAnswer = await generateInterviewReadyAnswer(question.question, submittedAnswer);
 
     await interview.save();
 
@@ -293,6 +374,17 @@ Feedback Rules:
 - Do NOT explain scoring.
 - Keep tone professional and honest.
 
+How To Answer Rules:
+- Write ONLY a sample answer the candidate can speak in a real interview.
+- The answer must be natural, professional, conversational, and first-person.
+- Tailor it specifically to the interview question.
+- It must sound like a strong candidate answering the interviewer directly.
+- Keep it concise: 2 to 5 sentences.
+- Do NOT explain how to answer.
+- Do NOT give tips or meta commentary.
+- Do NOT include phrases like "A correct answer should", "I would answer this by", "You should", or "The candidate should".
+- Do NOT use bullet points.
+
 Return ONLY valid JSON in this format:
 
 {
@@ -300,7 +392,8 @@ Return ONLY valid JSON in this format:
   "communication": number,
   "correctness": number,
   "finalScore": number,
-  "feedback": "short human feedback"
+  "feedback": "short human feedback",
+  "howToAnswer": "sample interview answer"
 }
 `
       }
@@ -309,7 +402,7 @@ Return ONLY valid JSON in this format:
         role: "user",
         content: `
 Question: ${question.question}
-Answer: ${answer}
+Answer: ${submittedAnswer}
 `
       }
     ];
@@ -319,17 +412,21 @@ const aiResponse = await askAi(messages)
 
 
 const parsed = JSON.parse(aiResponse);
+const howToAnswer =
+  parsed.howToAnswer ||
+  createFallbackInterviewAnswer(question.question);
 
-question.answer = answer;
+question.answer = submittedAnswer;
 question.confidence = parsed.confidence;
 question.communication = parsed.communication;
 question.correctness = parsed.correctness;
 question.score = parsed.finalScore;
 question.feedback = parsed.feedback;
+question.howToAnswer = howToAnswer;
 
 
 await interview.save();
-return res.status(200).json({feedback :parsed.feedback})
+return res.status(200).json({feedback :parsed.feedback, howToAnswer})
 
 } catch (error) {
 return res.status(500).json({message:`failed to submit answer ${error}`})
@@ -338,7 +435,7 @@ return res.status(500).json({message:`failed to submit answer ${error}`})
 
 export const finishInterview = async (req,res) => {
   try {
-    const {interviewId} = req.body
+    const {interviewId, interviewRating = 0, interviewComment = ""} = req.body
     const interview = await Interview.findById(interviewId)
     if(!interview){
       return res.status(400).json({message:"failed to find Interview"})
@@ -350,6 +447,12 @@ let totalScore = 0;
 let totalConfidence = 0;
 let totalCommunication = 0;
 let totalCorrectness = 0;
+
+for (const q of interview.questions) {
+  if (!q.howToAnswer || !q.howToAnswer.trim()) {
+    q.howToAnswer = await generateInterviewReadyAnswer(q.question, q.answer || "");
+  }
+}
 
 interview.questions.forEach((q) => {
   totalScore += q.score || 0;
@@ -376,6 +479,8 @@ const avgCorrectness = totalQuestions
 
 interview.finalScore = finalScore;
 interview.status = "completed";
+interview.interviewRating = interviewRating;
+interview.interviewComment = interviewComment;
 
 await interview.save();
 
@@ -386,6 +491,8 @@ return res.status(200).json({
   correctness: Number(avgCorrectness.toFixed(1)),
   questionWiseScore: interview.questions.map((q) => ({
     question: q.question,
+    answer: q.answer || "",
+    howToAnswer: q.howToAnswer || "",
     score: q.score || 0,
     feedback: q.feedback || "",
     confidence: q.confidence || 0,
@@ -435,6 +542,18 @@ export const getInterviewReport = async (req,res) => {
       totalCorrectness += q.correctness || 0;
     });
 
+    let reportUpdated = false;
+    for (const q of interview.questions) {
+      if (!q.howToAnswer || !q.howToAnswer.trim()) {
+        q.howToAnswer = await generateInterviewReadyAnswer(q.question, q.answer || "");
+        reportUpdated = true;
+      }
+    }
+
+    if (reportUpdated) {
+      await interview.save();
+    }
+
     const avgConfidence = totalQuestions
   ? totalConfidence / totalQuestions
   : 0;
@@ -452,7 +571,16 @@ const avgCorrectness = totalQuestions
   confidence: Number(avgConfidence.toFixed(1)),
   communication: Number(avgCommunication.toFixed(1)),
   correctness: Number(avgCorrectness.toFixed(1)),
-  questionWiseScore: interview.questions
+  questionWiseScore: interview.questions.map((q) => ({
+    question: q.question,
+    answer: q.answer || "",
+    howToAnswer: q.howToAnswer || "",
+    score: q.score || 0,
+    feedback: q.feedback || "",
+    confidence: q.confidence || 0,
+    communication: q.communication || 0,
+    correctness: q.correctness || 0,
+  }))
 });
 }catch(error){
   return res.status(500).json({message:`failed to find currentUser Interview Report ${error}`})
