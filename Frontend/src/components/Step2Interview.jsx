@@ -35,6 +35,8 @@ const [micRunning, setMicRunning] = useState(false);
   const currentQuestion = questions?.[currentIndex];
  const micOnRef = useRef(true);
 const aiPlayingRef = useRef(false);
+const micRunningRef = useRef(false);
+const micPermissionRequestedRef = useRef(false);
 
 
 useEffect(() => {
@@ -44,6 +46,10 @@ useEffect(() => {
 useEffect(() => {
   aiPlayingRef.current = isAIPlaying;
 }, [isAIPlaying]);
+
+useEffect(() => {
+  micRunningRef.current = micRunning;
+}, [micRunning]);
 
 const femaleVoiceNames = [
   "female",
@@ -149,13 +155,16 @@ const waitForVoices = () =>
   const speakText = async (text) => {
   console.log("🟢 speakText called");
 
-  if (!("speechSynthesis" in window)) return;
+  if (!("speechSynthesis" in window)) {
+    setSubtitle(text);
+    return Promise.resolve();
+  }
 
   stopMic();
 
   const voices = await waitForVoices();
 
-  if (speechSynthesis.speaking) {
+  if (speechSynthesis.speaking || speechSynthesis.pending) {
     speechSynthesis.cancel();
   }
 
@@ -173,6 +182,23 @@ const waitForVoices = () =>
   utterance.pitch = 1.05;
   utterance.volume = 1;
 
+  return new Promise((resolve) => {
+  let settled = false;
+
+  const finish = () => {
+    if (settled) return;
+    settled = true;
+
+    setIsAIPlaying(false);
+    setSubtitle("");
+
+    if (micOnRef.current) {
+      startMic();
+    }
+
+    resolve();
+  };
+
   utterance.onstart = () => {
     console.log("🎙️ Speech Started");
     setSubtitle(text);
@@ -182,25 +208,26 @@ const waitForVoices = () =>
   utterance.onend = () => {
     console.log("✅ Speech Ended");
 
-    setIsAIPlaying(false);
-    setSubtitle("");
-
-    if (micOnRef.current) {
-      startMic();
-    }
+    finish();
   };
 
   utterance.onerror = (e) => {
     console.log("❌ Speech Error:", e);
-    setIsAIPlaying(false);
-    setSubtitle("");
+    finish();
   };
 
-  speechSynthesis.cancel();
+  setSubtitle(text);
+  setIsAIPlaying(true);
 
   setTimeout(() => {
     speechSynthesis.speak(utterance);
+    setTimeout(() => {
+      if (!speechSynthesis.speaking && !speechSynthesis.pending) {
+        finish();
+      }
+    }, 800);
   }, 100);
+  });
 };
 
 useEffect(() => {
@@ -215,6 +242,8 @@ useEffect(() => {
   const startFlow = async () => {
     if (hasStartedRef.current) return;
     hasStartedRef.current = true;
+
+    requestMicPermission();
 
     setIsIntroPhase(true);
 
@@ -286,6 +315,7 @@ useEffect(() => {
 
   recognition.onstart = () => {
     console.log("🎤 Mic Started");
+    micRunningRef.current = true;
     setMicRunning(true);
   };
 
@@ -302,6 +332,7 @@ useEffect(() => {
   recognition.onerror = (e) => {
     console.log("Recognition Error:", e.error);
 
+    micRunningRef.current = false;
     setMicRunning(false);
 
     if (
@@ -320,6 +351,7 @@ useEffect(() => {
   recognition.onend = () => {
     console.log("🎤 Mic Ended");
 
+    micRunningRef.current = false;
     setMicRunning(false);
 
     if (micOnRef.current && !aiPlayingRef.current) {
@@ -340,10 +372,26 @@ useEffect(() => {
 
 
  
-const startMic = () => {
+async function requestMicPermission() {
+  if (micPermissionRequestedRef.current) return;
+  micPermissionRequestedRef.current = true;
+
+  if (!navigator.mediaDevices?.getUserMedia) return;
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((track) => track.stop());
+  } catch (err) {
+    console.log("Mic permission:", err);
+    setIsMicOn(false);
+    micOnRef.current = false;
+  }
+}
+
+function startMic() {
   if (!recognitionRef.current) return;
 
-  if (micRunning) return;
+  if (micRunningRef.current) return;
 
   if (aiPlayingRef.current) return;
 
@@ -352,11 +400,11 @@ const startMic = () => {
   } catch (err) {
     console.log("Mic Start:", err.message);
   }
-};
+}
 
 
 
-const stopMic = () => {
+function stopMic() {
   if (!recognitionRef.current) return;
 
   try {
@@ -365,8 +413,9 @@ const stopMic = () => {
     console.log(err);
   }
 
+  micRunningRef.current = false;
   setMicRunning(false);
-};
+}
 
  const toggleMic = () => {
   if (isMicOn) {
@@ -425,12 +474,6 @@ const handleNext = async () => {
   await speakText("Alright, let's move to the next question.");
 
   setCurrentIndex((prev) => prev + 1);
-
-  setTimeout(() => {
-  if (micOnRef.current) {
-    startMic();
-  }
-}, 300);
 };
 
   const finishInterview = async () => {

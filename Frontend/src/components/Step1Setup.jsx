@@ -31,13 +31,24 @@ const dispatch = useDispatch();
 
     window.speechSynthesis.getVoices();
 
-    const warmup = new SpeechSynthesisUtterance(" ");
-    warmup.volume = 0;
+    const warmup = new SpeechSynthesisUtterance(".");
+    warmup.volume = 0.01;
     window.speechSynthesis.speak(warmup);
 
     setTimeout(() => {
       window.speechSynthesis.cancel();
-    }, 0);
+    }, 50);
+  };
+
+  const requestMicPermission = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) return;
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+    } catch (error) {
+      console.log("Mic permission:", error);
+    }
   };
 
 
@@ -70,6 +81,7 @@ const dispatch = useDispatch();
 
   const handleStart = async () => {
     warmUpSpeechSynthesis();
+    requestMicPermission();
     setLoading(true);
     try {
       const result = await axios.post(
