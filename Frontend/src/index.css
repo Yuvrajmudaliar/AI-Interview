@@ -20,7 +20,7 @@ body {
   background:
     radial-gradient(circle at 8% 8%, rgba(216, 167, 177, 0.34), transparent 28rem),
     radial-gradient(circle at 88% 12%, rgba(155, 77, 109, 0.16), transparent 24rem),
-    linear-gradient(135deg, #faf6f3 0%, #fffdfb 100%);
+    linear-gradient(135deg, #faf6f3 0%, #FFFFFF 100%);
 }
 
 img,
@@ -42,7 +42,7 @@ textarea {
   background:
     radial-gradient(circle at 12% 10%, rgba(216, 167, 177, 0.28), transparent 24rem),
     radial-gradient(circle at 88% 18%, rgba(155, 77, 109, 0.14), transparent 24rem),
-    linear-gradient(135deg, #faf6f3 0%, #fffdfb 55%, #fceef2 100%);
+    linear-gradient(135deg, #faf6f3 0%, #FFFFFF 55%, #FAF6F3 100%);
 }
 
 .glass-card {
@@ -68,7 +68,7 @@ textarea {
 
 .premium-button:disabled {
   cursor: not-allowed;
-  background: #b8a8ad;
+  background: #D8A7B1;
   box-shadow: none;
   transform: none;
 }
@@ -134,3 +134,4 @@ textarea {
     opacity: 1;
   }
 }
+

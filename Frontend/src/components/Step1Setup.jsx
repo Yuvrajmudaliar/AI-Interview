@@ -115,7 +115,7 @@ const dispatch = useDispatch();
           initial={{ x: -80, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="relative overflow-hidden bg-gradient-to-br from-[#FCEEF2] via-[#FAF6F3] to-white p-6 sm:p-9 lg:p-12 flex flex-col justify-center"
+          className="relative overflow-hidden bg-gradient-to-br from-[#FAF6F3] via-[#FAF6F3] to-white p-6 sm:p-9 lg:p-12 flex flex-col justify-center"
         >
           <div className="absolute -left-20 top-8 h-48 w-48 rounded-full bg-[#D8A7B1]/35 blur-3xl" />
           <div className="absolute -right-24 bottom-10 h-56 w-56 rounded-full bg-[#9B4D6D]/15 blur-3xl" />
@@ -124,7 +124,7 @@ const dispatch = useDispatch();
             Start Your AI Interview
           </h2>
 
-          <p className="relative text-[#6f5960] mb-7 sm:mb-10 leading-7">
+          <p className="relative text-[#2B2024] mb-7 sm:mb-10 leading-7">
             Practice real interview scenarios powered by AI. Improve
             communication, technical skills, and confidence
           </p>
@@ -173,7 +173,6 @@ const dispatch = useDispatch();
           <h2 className="text-2xl sm:text-3xl font-bold text-[#2B2024] mb-2">
             Interview Setup
           </h2>
-          <p className="mb-7 text-sm text-[#7d6970]">Tell the interviewer what role to simulate.</p>
 
           <div className="space-y-6">
             <div className="relative">
@@ -213,7 +212,7 @@ const dispatch = useDispatch();
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 onClick={() => document.getElementById("resumeUpload").click()}
-              className="rounded-[24px] border border-dashed border-[#D8A7B1] bg-[#FAF6F3]/70 p-5 sm:p-8 text-center cursor-pointer hover:border-[#9B4D6D] hover:bg-[#FCEEF2] transition"
+              className="rounded-[24px] border border-dashed border-[#D8A7B1] bg-[#FAF6F3]/70 p-5 sm:p-8 text-center cursor-pointer hover:border-[#9B4D6D] hover:bg-[#FAF6F3] transition"
               >
                 <FaFileUpload className="text-4xl mx-auto text-[#9b3d55] mb-3" />
 
@@ -260,7 +259,7 @@ const dispatch = useDispatch();
                   <div>
                     <p className="font-medium text-[#2B2024] mb-1">Projects:</p>
 
-                    <ul className="list-disc list-inside text-[#6f5960] space-y-1">
+                    <ul className="list-disc list-inside text-[#2B2024] space-y-1">
                       {projects.map((p, i) => (
                         <li key={i}>{p}</li>
                       ))}
@@ -276,7 +275,7 @@ const dispatch = useDispatch();
                       {skills.map((s, i) => (
                         <span
                           key={i}
-                          className="bg-[#FCEEF2] text-[#7A2F43] px-3 py-1 rounded-full text-sm border border-[#EAD9DE]"
+                          className="bg-[#FAF6F3] text-[#7A2F43] px-3 py-1 rounded-full text-sm border border-[#EAD9DE]"
                         >
                           {s}
                         </span>
@@ -303,3 +302,4 @@ const dispatch = useDispatch();
 }
 
 export default Step1Setup;
+

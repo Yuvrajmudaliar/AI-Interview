@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { motion } from "motion/react";
 import { FaRobot } from "react-icons/fa";
-import { BsCoin, BsStars } from "react-icons/bs";
+import { BsCoin } from "react-icons/bs";
 import { HiOutlineLogout } from "react-icons/hi";
 import { FaUserAstronaut } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -42,12 +42,13 @@ function Navbar() {
   };
 
   return (
-    <div className="fixed inset-x-0 top-0 flex justify-center px-3 sm:px-5 pt-3 sm:pt-5 z-[100]">
+    <div className="bg-[#FAF6F3] flex justify-center px-3 sm:px-4 pt-4 sm:pt-6 relative z-[100]">
       <motion.div
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 180, damping: 22 }}
-        className="glass-card w-full max-w-6xl rounded-[22px] sm:rounded-[28px] px-3 sm:px-5 lg:px-6 py-3 flex justify-between items-center gap-3 relative"
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-6xl bg-white/90 rounded-2xl sm:rounded-[24px] shadow-lg shadow-[#7A2F43]/10
+        border border-[#EAD9DE] px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center gap-3 relative backdrop-blur"
       >
         <div
           onClick={() => {
@@ -57,16 +58,13 @@ function Navbar() {
           }}
           className="flex min-w-0 items-center gap-2 sm:gap-3 cursor-pointer"
         >
-          <div className="bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-[#FFD700] p-2.5 rounded-2xl shadow-lg shadow-[#7a2f43]/20">
+          <div className="bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-[#D8A7B1] p-2 rounded-xl shadow-sm shadow-[#7A2F43]/20">
             <FaRobot size={18} />
           </div>
 
           <h1 className="font-semibold hidden sm:block text-base md:text-lg text-[#2B2024] truncate">
             Yuvixa AI
           </h1>
-          <span className="hidden md:inline-flex items-center gap-1 rounded-full border border-[#EAD9DE] bg-white/55 px-3 py-1 text-xs font-medium text-[#9B4D6D]">
-            <BsStars /> Interview Coach
-          </span>
         </div>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-4 md:gap-6 relative">
@@ -82,8 +80,8 @@ function Navbar() {
                 setShowUserPopup(false);
                 setShowCreditsPopup(!showCreditsPopup);
               }}
-              className="flex items-center gap-1.5 sm:gap-2 rounded-2xl border border-[#EAD9DE] bg-[#FCEEF2]/80 text-[#7A2F43]
-              px-3 sm:px-4 py-2 text-sm font-semibold hover:bg-white transition shadow-sm shadow-[#7a2f43]/10"
+              className="flex items-center gap-1.5 sm:gap-2 bg-white text-[#7A2F43]
+              px-2.5 sm:px-4 py-2 rounded-full text-sm hover:bg-[#FAF6F3] transition border border-[#EAD9DE] shadow-sm shadow-[#7A2F43]/10 hover:-translate-y-0.5"
             >
               <BsCoin size={20} />
 
@@ -94,7 +92,8 @@ function Navbar() {
             {showCreditsPopup && (
               <div
                 className="absolute right-0 mt-3 w-[min(16rem,calc(100vw-1.5rem))]
-                glass-card rounded-3xl p-5 z-[120]"
+                bg-white/95 shadow-2xl shadow-[#7A2F43]/15 border border-[#EAD9DE] rounded-2xl
+                p-5 z-[120] backdrop-blur"
               >
                 <p className="text-sm text-[#6e6963] mb-4">
                   Need more credits to continue interviews?
@@ -102,7 +101,7 @@ function Navbar() {
 
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="premium-button w-full py-2.5 text-sm font-semibold"
+                  className="w-full bg-gradient-to-r from-[#7A2F43] to-[#9B4D6D] hover:from-[#642638] hover:to-[#7A2F43] text-white py-2 rounded-xl text-sm transition shadow-md shadow-[#7A2F43]/20"
                 >
                   Buy more credits
                 </button>
@@ -122,8 +121,8 @@ function Navbar() {
                 setShowCreditsPopup(false);
                 setShowUserPopup(!showUserPopup);
               }}
-              className="w-10 h-10 bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-white rounded-2xl
-              flex items-center justify-center font-semibold shadow-lg shadow-[#7a2f43]/20 transition hover:-translate-y-0.5"
+              className="w-9 h-9 bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-white rounded-full
+              flex items-center justify-center font-semibold shadow-md shadow-[#7A2F43]/20 transition hover:-translate-y-0.5"
             >
               {userData ? (
                 // ✅ Fixed
@@ -135,8 +134,9 @@ function Navbar() {
 
             {showUserPopup && (
               <div
-                className="absolute right-0 mt-3 w-[min(13rem,calc(100vw-1.5rem))] bg-white
-                glass-card rounded-3xl p-4 z-[120]"
+                className="absolute right-0 mt-3 w-[min(13rem,calc(100vw-1.5rem))] bg-white/95
+                shadow-2xl shadow-[#7A2F43]/15 border border-[#EAD9DE] rounded-2xl
+                p-4 z-[120] backdrop-blur"
               >
                 {/* ✅ This was already correct */}
                 <p className="text-[#202124] text-sm font-medium break-words">
@@ -171,3 +171,4 @@ function Navbar() {
 }
 
 export default Navbar;
+

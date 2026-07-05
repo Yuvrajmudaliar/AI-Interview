@@ -704,10 +704,10 @@ const handleNext = async () => {
           {/* Status Card */}
           <div className="glass-card w-full rounded-[28px] p-5 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-[#6f5960]">Interview Status</span>
+              <span className="text-sm font-medium text-[#2B2024]">Interview Status</span>
 
               {isAIPlaying && (
-                <span className="rounded-full bg-[#FCEEF2] px-3 py-1 text-xs font-semibold text-[#9B4D6D] border border-[#EAD9DE]">
+                <span className="rounded-full bg-[#FAF6F3] px-3 py-1 text-xs font-semibold text-[#9B4D6D] border border-[#EAD9DE]">
                   {isAIPlaying ? "AI Speaking" : ""}
                 </span>
               )}
@@ -722,15 +722,6 @@ const handleNext = async () => {
               />
             </div>
 
-            <div className="flex h-11 items-center justify-center gap-1.5">
-              {[1, 2, 3, 4, 5].map((bar) => (
-                <span
-                  key={bar}
-                  className={`wave-bar ${micRunning ? "" : "opacity-25 !h-3 !animate-none"}`}
-                />
-              ))}
-            </div>
-
             <div className="h-px bg-[#EAD9DE]"></div>
 
             <div className="flex justify-around text-center">
@@ -738,32 +729,24 @@ const handleNext = async () => {
                 <span className="text-xl lg:text-2xl font-bold text-[#7A2F43]">
                   {currentIndex + 1}
                 </span>
-                <span className="text-xs text-[#7d6970]">Current Question</span>
+                <span className="text-xs text-[#2B2024]">Current Question</span>
               </div>
 
               <div className="flex flex-col">
                 <span className="text-xl lg:text-2xl font-bold text-[#7A2F43]">
                   {questions.length}
                 </span>
-                <span className="text-xs text-[#7d6970]">Total Questions</span>
+                <span className="text-xs text-[#2B2024]">Total Questions</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Panel */}
-        <div className="flex-1 flex flex-col p-5 sm:p-7 lg:p-9 min-w-0">
-          <div className="mb-5 lg:mb-7 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#9B4D6D]">Live Interview</p>
-          <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2B2024]">
+        <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 min-w-0">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#7A2F43] mb-4 lg:mb-6">
             AI Smart Interview
           </h2>
-          </div>
-          <div className="rounded-2xl border border-[#EAD9DE] bg-white/70 px-4 py-2 text-sm font-semibold text-[#7A2F43]">
-            {currentQuestion?.difficulty || "Practice"}
-          </div>
-          </div>
 
           {/* Question Box */}
           {!isIntroPhase && (
@@ -815,7 +798,7 @@ const handleNext = async () => {
                 className={`min-w-0 flex-1 px-3 py-3 lg:py-4 rounded-2xl shadow-lg transition font-semibold
     ${
       isSubmitting
-        ? "bg-[#b8a8ad] cursor-not-allowed text-white"
+        ? "bg-[#D8A7B1] cursor-not-allowed text-white"
         : "premium-button cursor-pointer"
     }
               `}
@@ -879,7 +862,7 @@ const handleNext = async () => {
                       ? "#7A2F43"
                       : index % 3 === 1
                         ? "#D8A7B1"
-                        : "#FFD700",
+                        : "#D8A7B1",
                 }}
                 initial={{ opacity: 0, y: -20, scale: 0 }}
                 animate={{
@@ -909,7 +892,7 @@ const handleNext = async () => {
 
               <div className="relative p-5 sm:p-8">
                 <motion.div
-                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7A2F43] via-[#9B4D6D] to-[#D8A7B1] text-[#FFD700] shadow-xl shadow-[#7a2f43]/30"
+                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7A2F43] via-[#9B4D6D] to-[#D8A7B1] text-[#D8A7B1] shadow-xl shadow-[#7a2f43]/30"
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.1 }}
@@ -1013,3 +996,4 @@ const handleNext = async () => {
 }
 
 export default Step2Interview;
+
