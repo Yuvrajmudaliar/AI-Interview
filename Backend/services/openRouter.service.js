@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const askAi = async (messages) => {
+export const askAi = async (messages, options = {}) => {
   try {
     console.time("OpenRouter Response");
 
@@ -9,8 +9,8 @@ export const askAi = async (messages) => {
       {
   model: "openai/gpt-4o-mini",
   messages,
-  max_tokens: 250,
-  temperature: 0.3
+  max_tokens: options.maxTokens ?? 700,
+  temperature: options.temperature ?? 0.3
 },
       {
         headers: {

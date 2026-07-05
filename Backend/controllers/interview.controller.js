@@ -262,7 +262,9 @@ Write ONLY a sample interview answer for the given question.
 
 Rules:
 - Natural, professional, conversational, and first-person.
-- Specific to the question.
+- Specific to the exact interview question.
+- Mention details from the question instead of using a generic answer.
+- Do not reuse wording that could fit any unrelated question.
 - Sounds like a strong candidate speaking directly in a real interview.
 - 2 to 5 concise sentences.
 - Do NOT explain how to answer.
@@ -283,7 +285,7 @@ Question: ${questionText}
 User's submitted answer: ${submittedAnswer || "No answer submitted."}
 `
       }
-    ]);
+    ], { maxTokens: 450, temperature: 0.7 });
 
     const parsed = JSON.parse(aiResponse);
     return parsed.howToAnswer || createFallbackInterviewAnswer(questionText);
@@ -317,10 +319,6 @@ export const submitAnswer = async (req, res) => {
         question.howToAnswer = await generateInterviewReadyAnswer(question.question, "");
        console.log("Saving answer:", question.answer);
         await interview.save();
-console.log(
-  "Saved in DB:",
-  verify.questions[questionIndex].answer
-);
 
         return res.json({
             feedback: question.feedback
@@ -375,17 +373,6 @@ Feedback Rules:
 - Do NOT explain scoring.
 - Keep tone professional and honest.
 
-How To Answer Rules:
-- Write ONLY a sample answer the candidate can speak in a real interview.
-- The answer must be natural, professional, conversational, and first-person.
-- Tailor it specifically to the interview question.
-- It must sound like a strong candidate answering the interviewer directly.
-- Keep it concise: 2 to 5 sentences.
-- Do NOT explain how to answer.
-- Do NOT give tips or meta commentary.
-- Do NOT include phrases like "A correct answer should", "I would answer this by", "You should", or "The candidate should".
-- Do NOT use bullet points.
-
 Return ONLY valid JSON in this format:
 
 {
@@ -393,8 +380,7 @@ Return ONLY valid JSON in this format:
   "communication": number,
   "correctness": number,
   "finalScore": number,
-  "feedback": "short human feedback",
-  "howToAnswer": "sample interview answer"
+  "feedback": "short human feedback"
 }
 `
       }
@@ -409,13 +395,14 @@ Answer: ${submittedAnswer}
     ];
 
 
-const aiResponse = await askAi(messages)
+const aiResponse = await askAi(messages, { maxTokens: 350 })
 
 
 const parsed = JSON.parse(aiResponse);
-const howToAnswer =
-  parsed.howToAnswer ||
-  createFallbackInterviewAnswer(question.question);
+const howToAnswer = await generateInterviewReadyAnswer(
+  question.question,
+  submittedAnswer
+);
 
 question.answer = submittedAnswer;
 question.confidence = parsed.confidence;
