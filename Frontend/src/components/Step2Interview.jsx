@@ -46,6 +46,7 @@ const aiPlayingRef = useRef(false);
 const micRunningRef = useRef(false);
 const micPermissionRequestedRef = useRef(false);
 const selectedVoiceRef = useRef(null);
+const recognitionStopResolverRef = useRef(null);
 const isLastQuestion = currentIndex + 1 >= questions.length;
 
 
@@ -421,6 +422,12 @@ useEffect(() => {
     micRunningRef.current = false;
     setMicRunning(false);
 
+    if (recognitionStopResolverRef.current) {
+      recognitionStopResolverRef.current();
+      recognitionStopResolverRef.current = null;
+      return;
+    }
+
     if (micOnRef.current && !aiPlayingRef.current) {
       console.log("Restarting Mic...");
 
@@ -484,6 +491,31 @@ function stopMic() {
   setMicRunning(false);
 }
 
+const stopMicAndWaitForFinalResult = () =>
+  new Promise((resolve) => {
+    if (!recognitionRef.current || !micRunningRef.current) {
+      resolve();
+      return;
+    }
+
+    recognitionStopResolverRef.current = resolve;
+
+    try {
+      recognitionRef.current.stop();
+    } catch (err) {
+      console.log(err);
+      recognitionStopResolverRef.current = null;
+      resolve();
+    }
+
+    setTimeout(() => {
+      if (recognitionStopResolverRef.current) {
+        recognitionStopResolverRef.current = null;
+        resolve();
+      }
+    }, 1200);
+  });
+
  const toggleMic = () => {
   if (isMicOn) {
     stopMic();
@@ -500,10 +532,10 @@ function stopMic() {
   const submitAnswer = async () => {
     if (isSubmittingRef.current) return false;
 
-    stopMic();
     isSubmittingRef.current = true;
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    await stopMicAndWaitForFinalResult();
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const submittedAnswer = answerRef.current;
 
