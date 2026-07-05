@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
 
 * {
   box-sizing: border-box;
@@ -14,6 +15,12 @@ body,
 body {
   margin: 0;
   overflow-x: hidden;
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #2b2024;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(216, 167, 177, 0.34), transparent 28rem),
+    radial-gradient(circle at 88% 12%, rgba(155, 77, 109, 0.16), transparent 24rem),
+    linear-gradient(135deg, #faf6f3 0%, #fffdfb 100%);
 }
 
 img,
@@ -21,4 +28,109 @@ video,
 canvas,
 svg {
   max-width: 100%;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.premium-shell {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(216, 167, 177, 0.28), transparent 24rem),
+    radial-gradient(circle at 88% 18%, rgba(155, 77, 109, 0.14), transparent 24rem),
+    linear-gradient(135deg, #faf6f3 0%, #fffdfb 55%, #fceef2 100%);
+}
+
+.glass-card {
+  border: 1px solid rgba(234, 217, 222, 0.88);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 24px 70px rgba(122, 47, 67, 0.1);
+  backdrop-filter: blur(22px);
+}
+
+.premium-button {
+  border-radius: 18px;
+  background: linear-gradient(135deg, #7a2f43 0%, #9b4d6d 100%);
+  color: #fff;
+  box-shadow: 0 18px 45px rgba(122, 47, 67, 0.24);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.premium-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 60px rgba(122, 47, 67, 0.3);
+  filter: saturate(1.05);
+}
+
+.premium-button:disabled {
+  cursor: not-allowed;
+  background: #b8a8ad;
+  box-shadow: none;
+  transform: none;
+}
+
+.soft-button {
+  border: 1px solid #ead9de;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #7a2f43;
+  box-shadow: 0 12px 30px rgba(122, 47, 67, 0.08);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.soft-button:hover {
+  transform: translateY(-2px);
+  border-color: #d8a7b1;
+  box-shadow: 0 18px 45px rgba(122, 47, 67, 0.14);
+}
+
+.premium-input {
+  border: 1px solid #ead9de;
+  background: rgba(255, 255, 255, 0.78);
+  color: #2b2024;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.premium-input:focus {
+  border-color: #d8a7b1;
+  box-shadow: 0 0 0 4px rgba(216, 167, 177, 0.25);
+}
+
+.wave-bar {
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d8a7b1, #7a2f43);
+  animation: wavePulse 1s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.wave-bar:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.wave-bar:nth-child(4) {
+  animation-delay: 0.36s;
+}
+
+.wave-bar:nth-child(5) {
+  animation-delay: 0.48s;
+}
+
+@keyframes wavePulse {
+  0%, 100% {
+    height: 12px;
+    opacity: 0.55;
+  }
+
+  50% {
+    height: 34px;
+    opacity: 1;
+  }
 }

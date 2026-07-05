@@ -32,76 +32,147 @@ function Home() {
     setShowAuth(false);
   }
 }, [userData]);
+  const startInterview = () => {
+    if (!userData) {
+      setShowAuth(true);
+      return;
+    }
+    navigate("/interview");
+  };
+
+  const viewHistory = () => {
+    if (!userData) {
+      setShowAuth(true);
+      return;
+    }
+    navigate("/history");
+  };
+
   return (
-    <div className="min-h-screen bg-[#f6f1ea] flex flex-col text-[#202124]">
+    <div className="premium-shell min-h-screen flex flex-col text-[#2B2024] overflow-hidden">
       <Navbar />
 
-      <div className="flex-1 px-4 sm:px-6 py-10 sm:py-16 lg:py-20">
-        <div className=" max-w-6xl mx-auto">
-          <div className="flex justify-center mb-6">
-            <div className="bg-white/90 text-[#5f5b56] text-xs sm:text-sm px-4 py-2 rounded-full flex items-center gap-2 border border-[#e6d8c8] shadow-sm backdrop-blur text-center">
-              <HiSparkles size={16} className="text-[#9b3d55]" />
-              AI-Powered Mock Interview Platform
-            </div>
-          </div>
-          <div className="text-center mb-16 sm:mb-24 lg:mb-28">
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight max-w-4xl mx-auto text-[#171717]"
-            >
-              Practice Interviews with
-              <span className="relative inline-block mt-2 sm:mt-0 sm:ml-3">
-                <span className="bg-[#ead8cf] text-[#7a2f43] px-3 sm:px-4 py-1 rounded-full shadow-sm">
+      <main className="flex-1 px-4 sm:px-6 pb-12 pt-28 sm:pt-32 lg:pt-36">
+        <div className="max-w-6xl mx-auto">
+          <section className="relative grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center min-h-[calc(100vh-9rem)] pb-12">
+            <motion.div
+              className="absolute -left-28 top-0 h-72 w-72 rounded-full bg-[#D8A7B1]/30 blur-3xl"
+              animate={{ y: [0, 22, 0], scale: [1, 1.06, 1] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute right-0 top-10 h-80 w-80 rounded-full bg-[#9B4D6D]/12 blur-3xl"
+              animate={{ y: [0, -18, 0], scale: [1, 1.08, 1] }}
+              transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+            />
+
+            <div className="relative z-10">
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="inline-flex items-center gap-2 rounded-full border border-[#EAD9DE] bg-white/70 px-4 py-2 text-sm font-medium text-[#7A2F43] shadow-sm backdrop-blur"
+              >
+                <HiSparkles size={16} className="text-[#D8A7B1]" />
+                AI-powered preparation for modern candidates
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.08 }}
+                className="mt-7 max-w-4xl text-5xl font-bold leading-[0.98] tracking-normal text-[#2B2024] sm:text-6xl lg:text-7xl"
+              >
+                Your Personal{" "}
+                <span className="bg-gradient-to-r from-[#7A2F43] via-[#9B4D6D] to-[#D8A7B1] bg-clip-text text-transparent">
                   AI Interview Coach
                 </span>
-              </span>
-            </motion.h1>
+              </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="text-[#6e6963] mt-6 max-w-2xl mx-auto text-base sm:text-lg"
-            >
-              Practice role-based interviews with an AI interviewer,
-              receive instant feedback, and improve your confidence.
-            </motion.p>
-
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mt-10">
-              <motion.button
-                onClick={() => {
-                  if (!userData) {
-                    setShowAuth(true);
-                    return;
-                  }
-                  navigate("/interview");
-                }}
-                whileHover={{ opacity: 0.9, scale: 1.03 }}
-                whileTap={{ opacity: 1, scale: 0.98 }}
-                className="bg-[#7a2f43] text-white px-6 sm:px-10 py-3 rounded-full hover:bg-[#642638] transition shadow-lg shadow-[#7a2f43]/20 w-full sm:w-auto"
+              <motion.p
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.16 }}
+                className="mt-6 max-w-2xl text-lg leading-8 text-[#6f5960]"
               >
-                Start Interview
-              </motion.button>
+                Practice realistic interviews with AI, receive instant feedback,
+                improve confidence, and land your dream job.
+              </motion.p>
 
-              <motion.button
-                onClick={() => {
-                  if (!userData) {
-                    setShowAuth(true);
-                    return;
-                  }
-                  navigate("/history");
-                }}
-                whileHover={{ opacity: 0.9, scale: 1.03 }}
-                whileTap={{ opacity: 1, scale: 0.98 }}
-                className="border border-[#d8c7b9] bg-white/90 text-[#3e3a36] px-6 sm:px-10 py-3 rounded-full hover:bg-[#2b2b2f] hover:border-[#2b2b2f] hover:text-white transition shadow-sm w-full sm:w-auto"
-              >
-                View History
-              </motion.button>
+              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+                <motion.button
+                  onClick={startInterview}
+                  whileTap={{ scale: 0.97 }}
+                  className="premium-button px-7 py-4 text-base font-semibold"
+                >
+                  Start Interview
+                </motion.button>
+
+                <motion.button
+                  onClick={viewHistory}
+                  whileTap={{ scale: 0.97 }}
+                  className="soft-button px-7 py-4 text-base font-semibold"
+                >
+                  View Dashboard
+                </motion.button>
+              </div>
+
+              <div className="mt-10 grid grid-cols-3 gap-3 max-w-xl">
+                {[
+                  ["12k+", "Sessions"],
+                  ["8.8", "Avg score"],
+                  ["94%", "Confidence"],
+                ].map(([value, label]) => (
+                  <div key={label} className="glass-card rounded-3xl px-4 py-5">
+                    <p className="text-2xl font-bold text-[#7A2F43]">{value}</p>
+                    <p className="mt-1 text-xs font-medium text-[#7d6970]">{label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-center items-stretch md:items-center gap-8 lg:gap-10 mb-16 sm:mb-24 lg:mb-28">
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 130, damping: 18 }}
+              className="relative z-10 mx-auto w-full max-w-xl"
+            >
+              <div className="glass-card relative overflow-hidden rounded-[32px] p-5 sm:p-7">
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#7A2F43] via-[#D8A7B1] to-[#9B4D6D]" />
+                <div className="rounded-[28px] bg-gradient-to-br from-[#FCEEF2] to-white p-6">
+                  <img src={hrImg} alt="AI interview coach" className="mx-auto h-64 sm:h-80 object-contain drop-shadow-2xl" />
+                </div>
+              </div>
+
+              {[
+                ["top-8 -left-3 sm:-left-10", "Confidence", "92%", "⭐"],
+                ["top-24 -right-2 sm:-right-8", "Score", "8.7", "🏆"],
+                ["bottom-20 -left-2 sm:-left-8", "Progress", "+34%", "📈"],
+                ["bottom-8 right-6", "AI Feedback", "Ready", "💡"],
+              ].map(([pos, label, value, icon], index) => (
+                <motion.div
+                  key={label}
+                  className={`glass-card absolute ${pos} rounded-3xl px-4 py-3`}
+                  animate={{ y: [0, index % 2 ? 10 : -10, 0] }}
+                  transition={{ duration: 4 + index, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{icon}</span>
+                    <div>
+                      <p className="text-xs text-[#7d6970]">{label}</p>
+                      <p className="text-sm font-bold text-[#2B2024]">{value}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </section>
+
+          <section className="py-10 sm:py-16">
+            <div className="mb-10 text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#9B4D6D]">Workflow</p>
+              <h2 className="mt-3 text-3xl sm:text-5xl font-bold text-[#2B2024]">Practice like it matters.</h2>
+            </div>
+            <div className="grid md:grid-cols-3 gap-5 lg:gap-7">
             {[
               {
                 icon: <BsRobot size={24} />,
@@ -127,49 +198,41 @@ function Home() {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 + index * 0.2 }}
-                whileHover={{ rotate: 0, scale: 1.06 }}
-                className={`
-relative bg-white rounded-2xl sm:rounded-3xl border-2 border-[#eaded1]
-hover:border-[#9b3d55] p-7 sm:p-8 lg:p-10 w-full sm:w-80 max-w-none shadow-md shadow-[#d7c7b8]/40
-hover:shadow-2xl hover:shadow-[#9b3d55]/10
-transition-all duration-300
-${index === 0 ? "md:rotate-[-4deg]" : ""}
-${index === 1 ? "md:rotate-[3deg] md:-mt-6 shadow-xl" : ""}
-${index === 2 ? "md:rotate-[-3deg]" : ""}
-`}
+                whileHover={{ y: -8 }}
+                className="glass-card relative rounded-[28px] p-7 sm:p-8 transition-all duration-300"
               >
                 <div
-                  className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#2b2b2f] border-2
- border-white text-[#f0c36a] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-[#2b2b2f]/20"
+                  className="mb-6 bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-[#FFD700] w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-[#7a2f43]/20"
                 >
                   {item.icon}
                 </div>
-                <div className="pt-10 text-center">
-                  <div className="text-xs text-[#9b3d55] font-semibold mb-2 tracking-wider">
+                <div>
+                  <div className="text-xs text-[#9B4D6D] font-semibold mb-2 tracking-wider">
                     {item.step}
                   </div>
-                  <h3 className="font-semibold mb-3 text-lg text-[#202124]">
+                  <h3 className="font-semibold mb-3 text-xl text-[#2B2024]">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-[#6e6963] leading-relaxed">
+                  <p className="text-sm text-[#6f5960] leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
               </motion.div>
             ))}
           </div>
+          </section>
 
-          <div className="mb-16 sm:mb-24 lg:mb-32">
+          <section className="py-10 sm:py-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl sm:text-4xl font-semibold text-center mb-8 sm:mb-14 lg:mb-16"
+              className="text-3xl sm:text-5xl font-bold text-center mb-8 sm:mb-14 lg:mb-16"
             >
-              Advanced AI <span className="text-[#9b3d55]">Capabilities</span>
+              Advanced AI <span className="text-[#9B4D6D]">Capabilities</span>
             </motion.h2>
 
-            <div className="grid lg:grid-cols-2 gap-5 sm:gap-8 lg:gap-10">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
               {[
                 {
                   image: evalImg,
@@ -181,7 +244,7 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                   image: resumeImg,
                   icon: <BsFileEarmarkText size={20} />,
                   title: "Resume Based Interview",
-                  desc: "Project-specific questions based on ",
+                  desc: "Project-specific questions based on your resume.",
                 },
                 {
                   image: pdfImg,
@@ -195,32 +258,44 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                   title: "History & Analytics",
                   desc: "Track progress with performance graphs and topic analysis.",
                 },
+                {
+                  image: confidenceImg,
+                  icon: <BsMic size={20} />,
+                  title: "Personalized Feedback",
+                  desc: "Compact feedback with confidence, clarity and accuracy signals.",
+                },
+                {
+                  image: creditImg,
+                  icon: <BsClock size={20} />,
+                  title: "Interview Streaks",
+                  desc: "Keep practice consistent with a focused preparation habit.",
+                },
               ].map((item, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="bg-white border border-[#eaded1] rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 shadow-sm shadow-[#d7c7b8]/30 hover:shadow-xl hover:shadow-[#9b3d55]/10 hover:border-[#d8b1a1] transition-all"
+                  whileHover={{ y: -8 }}
+                  className="glass-card rounded-[28px] p-5 sm:p-7 transition-all"
                 >
-                  <div className="flex flex-col sm:flex-row items-center gap-6 lg:gap-8">
-                    <div className="w-full sm:w-1/2 flex justify-center">
+                  <div className="flex flex-col gap-5">
+                    <div className="flex justify-center rounded-3xl bg-[#FCEEF2]/70 p-4">
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-auto object-contain max-h-48 sm:max-h-56 lg:max-h-64"
+                        className="h-36 object-contain"
                       />
                     </div>
 
-                    <div className="w-full sm:w-1/2 text-center sm:text-left">
-                      <div className="bg-[#f2e6dc] text-[#9b3d55] w-12 h-12 rounded-xl flex items-center justify-center mb-6 border border-[#ead8c8]">
+                    <div>
+                      <div className="bg-white text-[#9B4D6D] w-12 h-12 rounded-2xl flex items-center justify-center mb-5 border border-[#EAD9DE] shadow-sm">
                         {item.icon}
                       </div>
 
-                      <h3 className="text-[#202124] font-semibold text-lg mb-2">{item.title}</h3>
+                      <h3 className="text-[#2B2024] font-semibold text-lg mb-2">{item.title}</h3>
 
-                      <p className="text-[#6e6963] text-sm leading-relaxed">
+                      <p className="text-[#6f5960] text-sm leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -228,16 +303,16 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                 </motion.div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="mb-16 sm:mb-24 lg:mb-32">
+          <section className="py-10 sm:py-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl sm:text-4xl font-semibold text-center mb-8 sm:mb-14 lg:mb-16"
+              className="text-3xl sm:text-5xl font-bold text-center mb-8 sm:mb-14 lg:mb-16"
             >
-              Multiple Interview <span className="text-[#9b3d55]">Modes</span>
+              Multiple Interview <span className="text-[#9B4D6D]">Modes</span>
             </motion.h2>
 
             <div className="grid lg:grid-cols-2 gap-5 sm:gap-8 lg:gap-10">
@@ -271,16 +346,16 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -6 }}
-                  className="bg-white border border-[#eaded1] rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 shadow-sm shadow-[#d7c7b8]/30 hover:shadow-xl hover:shadow-[#9b3d55]/10 hover:border-[#d8b1a1] transition-all"
+                  whileHover={{ y: -8 }}
+                  className="glass-card rounded-[28px] p-5 sm:p-7 lg:p-8 transition-all"
                 >
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="w-full sm:w-1/2 text-center sm:text-left">
-                      <h3 className="font-semibold text-xl mb-3 text-[#202124]">
+                      <h3 className="font-semibold text-xl mb-3 text-[#2B2024]">
                         {mode.title}
                       </h3>
 
-                      <p className="text-[#6e6963] text-sm leading-relaxed">
+                      <p className="text-[#6f5960] text-sm leading-relaxed">
                         {mode.desc}
                       </p>
                     </div>
@@ -297,9 +372,9 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                 </motion.div>
               ))}
             </div>
-          </div>
+          </section>
         </div>
-      </div>
+      </main>
       {!userData && showAuth && (
   <AuthModel onClose={() => setShowAuth(false)} />
 )}

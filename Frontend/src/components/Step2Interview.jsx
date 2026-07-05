@@ -674,12 +674,12 @@ const handleNext = async () => {
   }, [currentIndex]);
 
   return (
-    <div className="min-h-screen bg-[#f6f1ea] p-2 sm:p-4">
-      <div className="w-full max-w-7xl mx-auto min-h-[calc(100vh-1rem)] sm:min-h-[calc(100vh-2rem)] bg-white rounded-2xl sm:rounded-3xl shadow-2xl shadow-[#7a2f43]/10 border border-[#eaded1] flex flex-col lg:flex-row overflow-hidden">
+    <div className="premium-shell min-h-screen p-3 sm:p-5">
+      <div className="glass-card w-full max-w-7xl mx-auto min-h-[calc(100vh-1.5rem)] sm:min-h-[calc(100vh-2.5rem)] rounded-[28px] sm:rounded-[36px] flex flex-col lg:flex-row overflow-hidden">
         {/* Left Panel */}
-        <div className="w-full lg:w-[35%] bg-white flex flex-col items-center p-3 sm:p-4 lg:p-6 gap-4 border-b lg:border-b-0 lg:border-r border-[#eaded1]">
+        <div className="w-full lg:w-[35%] bg-white/70 flex flex-col items-center p-4 sm:p-5 lg:p-7 gap-5 border-b lg:border-b-0 lg:border-r border-[#EAD9DE]">
           {/* Video */}
-          <div className="w-full max-w-sm lg:max-w-md rounded-2xl overflow-hidden shadow-xl shadow-[#7a2f43]/10">
+          <div className="w-full max-w-sm lg:max-w-md rounded-[28px] overflow-hidden shadow-2xl shadow-[#7a2f43]/14 border border-[#EAD9DE] bg-white p-2">
             <video
               src={videoSource}
               key={videoSource}
@@ -688,32 +688,32 @@ const handleNext = async () => {
               loop
               playsInline
               preload="auto"
-              className="w-full aspect-video lg:aspect-auto h-auto object-cover"
+              className="w-full aspect-video lg:aspect-auto h-auto object-cover rounded-[22px]"
             />
           </div>
 
           {/* subtitle */}
           {subtitle && (
-            <div className="w-full max-w-md bg-[#f9f5ef] border border-[#eaded1] rounded-xl p-4 shadow-sm">
-              <p className="text-[#3e3a36] text-sm sm:text-base font-medium text-center leading-relaxed">
+            <div className="glass-card w-full max-w-md rounded-[24px] p-4">
+              <p className="text-[#2B2024] text-sm sm:text-base font-medium text-center leading-relaxed">
                 {subtitle}
               </p>
             </div>
           )}
 
           {/* Status Card */}
-          <div className="w-full bg-white border border-[#eaded1] rounded-2xl shadow-md shadow-[#7a2f43]/10 p-4 space-y-3">
+          <div className="glass-card w-full rounded-[28px] p-5 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[#6e6963]">Interview Status</span>
+              <span className="text-sm font-medium text-[#6f5960]">Interview Status</span>
 
               {isAIPlaying && (
-                <span className="text-sm font-semibold text-[#9b3d55]">
+                <span className="rounded-full bg-[#FCEEF2] px-3 py-1 text-xs font-semibold text-[#9B4D6D] border border-[#EAD9DE]">
                   {isAIPlaying ? "AI Speaking" : ""}
                 </span>
               )}
             </div>
 
-            <div className="h-px bg-[#eaded1]"></div>
+            <div className="h-px bg-[#EAD9DE]"></div>
 
             <div className="flex justify-center py-2">
               <Timer
@@ -722,40 +722,57 @@ const handleNext = async () => {
               />
             </div>
 
-            <div className="h-px bg-[#eaded1]"></div>
+            <div className="flex h-11 items-center justify-center gap-1.5">
+              {[1, 2, 3, 4, 5].map((bar) => (
+                <span
+                  key={bar}
+                  className={`wave-bar ${micRunning ? "" : "opacity-25 !h-3 !animate-none"}`}
+                />
+              ))}
+            </div>
+
+            <div className="h-px bg-[#EAD9DE]"></div>
 
             <div className="flex justify-around text-center">
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold text-[#7a2f43]">
+                <span className="text-xl lg:text-2xl font-bold text-[#7A2F43]">
                   {currentIndex + 1}
                 </span>
-                <span className="text-xs text-[#8d8580]">Current Question</span>
+                <span className="text-xs text-[#7d6970]">Current Question</span>
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold text-[#7a2f43]">
+                <span className="text-xl lg:text-2xl font-bold text-[#7A2F43]">
                   {questions.length}
                 </span>
-                <span className="text-xs text-[#8d8580]">Total Questions</span>
+                <span className="text-xs text-[#7d6970]">Total Questions</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Panel */}
-        <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 min-w-0">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#7a2f43] mb-4 lg:mb-6">
+        <div className="flex-1 flex flex-col p-5 sm:p-7 lg:p-9 min-w-0">
+          <div className="mb-5 lg:mb-7 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#9B4D6D]">Live Interview</p>
+          <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2B2024]">
             AI Smart Interview
           </h2>
+          </div>
+          <div className="rounded-2xl border border-[#EAD9DE] bg-white/70 px-4 py-2 text-sm font-semibold text-[#7A2F43]">
+            {currentQuestion?.difficulty || "Practice"}
+          </div>
+          </div>
 
           {/* Question Box */}
           {!isIntroPhase && (
-            <div className="mb-4 lg:mb-6 bg-[#f9f5ef] p-4 sm:p-6 rounded-2xl border border-[#eaded1] shadow-sm">
-              <p className="text-xs sm:text-sm text-[#8d8580] mb-2">
+            <div className="mb-4 lg:mb-6 glass-card p-5 sm:p-6 rounded-[28px]">
+              <p className="text-xs sm:text-sm text-[#9B4D6D] font-semibold mb-2">
                 Question {currentIndex + 1} of {questions.length}
               </p>
 
-              <div className="text-base sm:text-lg font-semibold text-[#202124] leading-relaxed">
+              <div className="text-base sm:text-xl font-semibold text-[#2B2024] leading-relaxed">
                 {currentQuestion?.question}
               </div>
             </div>
@@ -769,8 +786,7 @@ const handleNext = async () => {
               setAnswer(e.target.value);
             }}
             placeholder="Type your answer here..."
-            className="w-full min-h-44 sm:min-h-[220px] lg:flex-1 bg-[#f9f5ef] p-4 sm:p-6 rounded-2xl resize-none outline-none border
-             border-[#eaded1] focus:ring-2 focus:ring-[#9b3d55] transition text-[#202124]"
+            className="premium-input w-full min-h-44 sm:min-h-[220px] lg:flex-1 p-4 sm:p-6 rounded-[28px] resize-none outline-none transition text-[#2B2024] placeholder:text-[#9b8b90]"
           />
 
           {/* Buttons */}
@@ -779,7 +795,11 @@ const handleNext = async () => {
               <motion.button
                 onClick={toggleMic}
                 whileTap={{ scale: 0.9 }}
-                className="w-12 h-12 lg:w-14 lg:h-14 shrink-0 flex items-center justify-center rounded-full bg-[#2b2b2f] text-[#f0c36a] shadow-lg shadow-[#2b2b2f]/20"
+                className={`w-14 h-14 lg:w-16 lg:h-16 shrink-0 flex items-center justify-center rounded-2xl shadow-lg transition ${
+                  isMicOn
+                    ? "bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-white shadow-[#7a2f43]/25"
+                    : "bg-white text-[#7A2F43] border border-[#EAD9DE] shadow-[#7a2f43]/10"
+                }`}
               >
                 {isMicOn ? (
                   <FaMicrophone size={20} />
@@ -792,13 +812,11 @@ const handleNext = async () => {
                 whileTap={{ scale: 0.95 }}
                 disabled={isSubmitting}
                 onClick={submitAnswer}
-                className={`min-w-0 flex-1 bg-[#7a2f43] text-white px-3 py-3 lg:py-4 
-              rounded-2xl shadow-lg shadow-[#7a2f43]/20 hover:bg-[#642638] transition font-semibold disabled:bg-[#8d8580]
-              flex-1 py-3 lg:py-4 rounded-2xl shadow-lg transition font-semibold
+                className={`min-w-0 flex-1 px-3 py-3 lg:py-4 rounded-2xl shadow-lg transition font-semibold
     ${
       isSubmitting
-        ? "bg-gray-400 cursor-not-allowed text-white"
-        : "bg-[#7a2f43] hover:bg-[#642638] text-white shadow-[#7a2f43]/20 cursor-pointer"
+        ? "bg-[#b8a8ad] cursor-not-allowed text-white"
+        : "premium-button cursor-pointer"
     }
               `}
               >
@@ -809,13 +827,14 @@ const handleNext = async () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mt-6 bg-[#f2e6dc] border border-[#ead8c8] p-5 rounded-2xl shadow-sm"
+              className="mt-6 glass-card p-5 rounded-[28px]"
             >
-              <p className="text-[#7a2f43] font-medium mb-4">{feedback}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9B4D6D] mb-2">AI Feedback</p>
+              <p className="text-[#2B2024] text-[15px] leading-6 mb-4">{feedback}</p>
 
               <button
                 onClick={handleNext}
-                className="w-full bg-[#7a2f43] hover:bg-[#642638] text-white py-3 rounded-xl shadow-md shadow-[#7a2f43]/20 transition flex items-center justify-center gap-1"
+                className="premium-button w-full py-3 flex items-center justify-center gap-1 font-semibold"
               >
                 {isLastQuestion ? "Finish Interview" : "Next Question"} <BsArrowRight size={18} />
               </button>
@@ -830,20 +849,20 @@ const handleNext = async () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/75 px-3 py-6 backdrop-blur-xl sm:px-6"
+            className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#2B2024]/45 px-3 py-6 backdrop-blur-xl sm:px-6"
           >
             <motion.div
-              className="pointer-events-none absolute left-[8%] top-[12%] h-36 w-36 rounded-full bg-[#7C3AED]/35 blur-3xl sm:h-56 sm:w-56"
+              className="pointer-events-none absolute left-[8%] top-[12%] h-36 w-36 rounded-full bg-[#D8A7B1]/35 blur-3xl sm:h-56 sm:w-56"
               animate={{ y: [0, -14, 0], scale: [1, 1.08, 1] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="pointer-events-none absolute bottom-[10%] right-[8%] h-40 w-40 rounded-full bg-[#06B6D4]/35 blur-3xl sm:h-64 sm:w-64"
+              className="pointer-events-none absolute bottom-[10%] right-[8%] h-40 w-40 rounded-full bg-[#9B4D6D]/20 blur-3xl sm:h-64 sm:w-64"
               animate={{ y: [0, 18, 0], scale: [1.08, 1, 1.08] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="pointer-events-none absolute right-[28%] top-[20%] h-24 w-24 rounded-full bg-[#3B82F6]/30 blur-2xl"
+              className="pointer-events-none absolute right-[28%] top-[20%] h-24 w-24 rounded-full bg-[#FAF6F3]/45 blur-2xl"
               animate={{ x: [0, 16, 0], y: [0, -10, 0] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -857,10 +876,10 @@ const handleNext = async () => {
                   top: `${8 + ((index * 29) % 36)}%`,
                   background:
                     index % 3 === 0
-                      ? "#7C3AED"
+                      ? "#7A2F43"
                       : index % 3 === 1
-                        ? "#3B82F6"
-                        : "#06B6D4",
+                        ? "#D8A7B1"
+                        : "#FFD700",
                 }}
                 initial={{ opacity: 0, y: -20, scale: 0 }}
                 animate={{
@@ -882,15 +901,15 @@ const handleNext = async () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 170, damping: 19 }}
-              className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/45 bg-white/85 shadow-2xl shadow-[#3B82F6]/20 backdrop-blur-2xl"
+              className="relative w-full max-w-[620px] overflow-hidden rounded-[28px] border border-white/55 bg-white/85 shadow-[0_25px_80px_rgba(122,47,67,.25)] backdrop-blur-2xl"
             >
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#7C3AED] via-[#3B82F6] to-[#06B6D4]" />
-              <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#7C3AED]/15 blur-2xl" />
-              <div className="absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-[#06B6D4]/15 blur-2xl" />
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#7A2F43] via-[#D8A7B1] to-[#9B4D6D]" />
+              <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#D8A7B1]/22 blur-2xl" />
+              <div className="absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-[#9B4D6D]/12 blur-2xl" />
 
               <div className="relative p-5 sm:p-8">
                 <motion.div
-                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] text-white shadow-xl shadow-[#3B82F6]/30"
+                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7A2F43] via-[#9B4D6D] to-[#D8A7B1] text-[#FFD700] shadow-xl shadow-[#7a2f43]/30"
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.1 }}
@@ -900,7 +919,7 @@ const handleNext = async () => {
                     animate={{ scale: finishSuccess ? [1, 1.2, 1] : 1 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <FaCheck size={34} />
+                    <FaStar size={34} />
                   </motion.div>
                 </motion.div>
 
