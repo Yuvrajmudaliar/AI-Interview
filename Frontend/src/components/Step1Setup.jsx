@@ -24,7 +24,7 @@ function Step1Setup({ onStart }) {
   const [analysisDone, setAnalysisDone] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const { userData } = useSelector((state) => state.user);
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const warmUpSpeechSynthesis = () => {
     if (!("speechSynthesis" in window)) return;
@@ -50,8 +50,6 @@ const dispatch = useDispatch();
       console.log("Mic permission:", error);
     }
   };
-
-
 
   const handleUploadResume = async () => {
     setAnalyzing(true);
@@ -98,7 +96,7 @@ const dispatch = useDispatch();
       setLoading(false);
       onStart(result.data);
     } catch (error) {
-       alert(error.response?.data?.message || error.message);
+      alert(error.response?.data?.message || error.message);
       console.log(error);
       setLoading(false);
     }
@@ -108,23 +106,20 @@ const dispatch = useDispatch();
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="premium-shell min-h-screen flex items-center justify-center px-3 sm:px-4 py-8 sm:py-12"
+      className="min-h-screen flex items-center justify-center bg-[#f6f1ea] px-3 sm:px-4 py-6 sm:py-8"
     >
-      <div className="glass-card w-full max-w-6xl rounded-[30px] sm:rounded-[36px] grid lg:grid-cols-[0.9fr_1.1fr] overflow-hidden">
+      <div className="w-full max-w-6xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl shadow-[#7a2f43]/10 border border-[#eaded1] grid lg:grid-cols-2 overflow-hidden">
         <motion.div
           initial={{ x: -80, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="relative overflow-hidden bg-gradient-to-br from-[#FAF6F3] via-[#FAF6F3] to-white p-6 sm:p-9 lg:p-12 flex flex-col justify-center"
+          className="relative bg-[#f2e6dc] p-5 sm:p-8 lg:p-12 flex flex-col justify-center"
         >
-          <div className="absolute -left-20 top-8 h-48 w-48 rounded-full bg-[#D8A7B1]/35 blur-3xl" />
-          <div className="absolute -right-24 bottom-10 h-56 w-56 rounded-full bg-[#9B4D6D]/15 blur-3xl" />
-          <p className="relative mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#9B4D6D]">Interview Studio</p>
-          <h2 className="relative text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-[#2B2024] mb-4 sm:mb-6">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#202124] mb-4 sm:mb-6">
             Start Your AI Interview
           </h2>
 
-          <p className="relative text-[#2B2024] mb-7 sm:mb-10 leading-7">
+          <p className="text-[#6e6963] mb-6 sm:mb-10">
             Practice real interview scenarios powered by AI. Improve
             communication, technical skills, and confidence
           </p>
@@ -155,10 +150,11 @@ const dispatch = useDispatch();
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 + index * 0.15 }}
                 whileHover={{ scale: 1.03 }}
-                className="glass-card flex items-center gap-3 sm:gap-4 p-4 rounded-2xl cursor-pointer"
+                className="flex items-center gap-3 sm:gap-4 bg-white/90 p-4
+  rounded-xl shadow-sm shadow-[#7a2f43]/10 cursor-pointer border border-[#eaded1]"
               >
                 {item.icon}
-                <span className="text-[#2B2024] font-medium text-sm sm:text-base">{item.text}</span>
+                <span className="text-[#3e3a36] font-medium text-sm sm:text-base">{item.text}</span>
               </motion.div>
             ))}
           </div>
@@ -168,10 +164,10 @@ const dispatch = useDispatch();
           initial={{ x: 80, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="p-5 sm:p-8 lg:p-12 bg-white/80"
+          className="p-5 sm:p-8 lg:p-12 bg-white"
         >
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#2B2024] mb-2">
-            Interview Setup
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#202124] mb-6 sm:mb-8">
+            Interview SetUp
           </h2>
 
           <div className="space-y-6">
@@ -181,7 +177,9 @@ const dispatch = useDispatch();
               <input
                 type="text"
                 placeholder="Enter role"
-                className="premium-input w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition"
+                className="w-full pl-12 pr-4 py-3 border border-[#eaded1]
+    rounded-xl focus:ring-2 focus:ring-[#9b3d55] outline-none
+    transition"
                 onChange={(e) => setRole(e.target.value)}
                 value={role}
               />
@@ -193,7 +191,9 @@ const dispatch = useDispatch();
               <input
                 type="text"
                 placeholder="Experience (e.g. 2 years)"
-                className="premium-input w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition"
+                className="w-full pl-12 pr-4 py-3 border border-[#eaded1]
+rounded-xl focus:ring-2 focus:ring-[#9b3d55] outline-none
+transition"
                 onChange={(e) => setExperience(e.target.value)}
                 value={experience}
               />
@@ -202,7 +202,8 @@ const dispatch = useDispatch();
             <select
               value={mode}
               onChange={(e) => setMode(e.target.value)}
-              className="premium-input w-full py-3.5 px-4 rounded-2xl outline-none transition"
+              className="w-full py-3 px-4 border border-[#eaded1] rounded-xl
+focus:ring-2 focus:ring-[#9b3d55] outline-none transition"
             >
               <option value="Technical">Technical Interview</option>
               <option value="HR">HR Interview</option>
@@ -212,7 +213,7 @@ const dispatch = useDispatch();
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 onClick={() => document.getElementById("resumeUpload").click()}
-              className="rounded-[24px] border border-dashed border-[#D8A7B1] bg-[#FAF6F3]/70 p-5 sm:p-8 text-center cursor-pointer hover:border-[#9B4D6D] hover:bg-[#FAF6F3] transition"
+              className="border-2 border-dashed border-[#d8c7b9] rounded-xl p-5 sm:p-8 text-center cursor-pointer hover:border-[#9b3d55] hover:bg-[#f2e6dc] transition"
               >
                 <FaFileUpload className="text-4xl mx-auto text-[#9b3d55] mb-3" />
 
@@ -233,7 +234,7 @@ const dispatch = useDispatch();
                 {resumeFile && (
                   <motion.button
                     whileHover={{ scale: 1.02 }}
-                    className="soft-button mt-4 px-5 py-2.5 text-sm font-semibold"
+                    className="mt-4 bg-[#2b2b2f] text-white px-5 py-2 rounded-lg hover:bg-[#202124] transition"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleUploadResume();
@@ -249,17 +250,17 @@ const dispatch = useDispatch();
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="glass-card rounded-[24px] p-5 space-y-4"
+                className="bg-[#f9f5ef] border border-[#eaded1] rounded-xl p-5 space-y-4"
               >
-                <h3 className="text-lg font-semibold text-[#2B2024]">
+                <h3 className="text-lg font-semibold text-[#202124]">
                   Resume Analysis Result
                 </h3>
 
                 {projects.length > 0 && (
                   <div>
-                    <p className="font-medium text-[#2B2024] mb-1">Projects:</p>
+                    <p className="font-medium text-[#3e3a36] mb-1">Projects:</p>
 
-                    <ul className="list-disc list-inside text-[#2B2024] space-y-1">
+                    <ul className="list-disc list-inside text-[#6e6963] space-y-1">
                       {projects.map((p, i) => (
                         <li key={i}>{p}</li>
                       ))}
@@ -269,13 +270,13 @@ const dispatch = useDispatch();
 
                 {skills.length > 0 && (
                   <div>
-                    <p className="font-medium text-[#2B2024] mb-1">Skills:</p>
+                    <p className="font-medium text-[#3e3a36] mb-1">Skills:</p>
 
                     <div className="flex flex-wrap gap-2">
                       {skills.map((s, i) => (
                         <span
                           key={i}
-                          className="bg-[#FAF6F3] text-[#7A2F43] px-3 py-1 rounded-full text-sm border border-[#EAD9DE]"
+                          className="bg-[#ead8cf] text-[#7a2f43] px-3 py-1 rounded-full text-sm"
                         >
                           {s}
                         </span>
@@ -290,7 +291,7 @@ const dispatch = useDispatch();
               disabled={!role || !experience || loading}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
-              className="premium-button w-full py-4 text-lg font-semibold"
+              className="w-full disabled:bg-[#8d8580] bg-[#7a2f43] hover:bg-[#642638] text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md shadow-[#7a2f43]/20"
             >
               {loading ? "Starting..." : "Start Interview"}
             </motion.button>

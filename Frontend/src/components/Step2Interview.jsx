@@ -677,9 +677,9 @@ const handleNext = async () => {
     <div className="premium-shell min-h-screen p-3 sm:p-5">
       <div className="glass-card w-full max-w-7xl mx-auto min-h-[calc(100vh-1.5rem)] sm:min-h-[calc(100vh-2.5rem)] rounded-[28px] sm:rounded-[36px] flex flex-col lg:flex-row overflow-hidden">
         {/* Left Panel */}
-        <div className="w-full lg:w-[35%] bg-white/70 flex flex-col items-center p-4 sm:p-5 lg:p-7 gap-5 border-b lg:border-b-0 lg:border-r border-[#EAD9DE]">
+        <div className="w-full lg:w-[35%] bg-white/70 flex flex-col items-center p-4 sm:p-5 lg:p-7 gap-5 border-b lg:border-b-0 lg:border-r border-[#eaded1]">
           {/* Video */}
-          <div className="w-full max-w-sm lg:max-w-md rounded-[28px] overflow-hidden shadow-2xl shadow-[#7a2f43]/14 border border-[#EAD9DE] bg-white p-2">
+          <div className="w-full max-w-sm lg:max-w-md rounded-[28px] overflow-hidden shadow-2xl shadow-[#7a2f43]/14 border border-[#eaded1] bg-white p-2">
             <video
               src={videoSource}
               key={videoSource}
@@ -695,7 +695,7 @@ const handleNext = async () => {
           {/* subtitle */}
           {subtitle && (
             <div className="glass-card w-full max-w-md rounded-[24px] p-4">
-              <p className="text-[#2B2024] text-sm sm:text-base font-medium text-center leading-relaxed">
+              <p className="text-[#202124] text-sm sm:text-base font-medium text-center leading-relaxed">
                 {subtitle}
               </p>
             </div>
@@ -704,16 +704,16 @@ const handleNext = async () => {
           {/* Status Card */}
           <div className="glass-card w-full rounded-[28px] p-5 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-[#2B2024]">Interview Status</span>
+              <span className="text-sm font-medium text-[#202124]">Interview Status</span>
 
               {isAIPlaying && (
-                <span className="rounded-full bg-[#FAF6F3] px-3 py-1 text-xs font-semibold text-[#9B4D6D] border border-[#EAD9DE]">
+                <span className="rounded-full bg-[#f9f5ef] px-3 py-1 text-xs font-semibold text-[#9b3d55] border border-[#eaded1]">
                   {isAIPlaying ? "AI Speaking" : ""}
                 </span>
               )}
             </div>
 
-            <div className="h-px bg-[#EAD9DE]"></div>
+            <div className="h-px bg-[#eaded1]"></div>
 
             <div className="flex justify-center py-2">
               <Timer
@@ -722,21 +722,21 @@ const handleNext = async () => {
               />
             </div>
 
-            <div className="h-px bg-[#EAD9DE]"></div>
+            <div className="h-px bg-[#eaded1]"></div>
 
             <div className="flex justify-around text-center">
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold text-[#7A2F43]">
+                <span className="text-xl lg:text-2xl font-bold text-[#7a2f43]">
                   {currentIndex + 1}
                 </span>
-                <span className="text-xs text-[#2B2024]">Current Question</span>
+                <span className="text-xs text-[#202124]">Current Question</span>
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold text-[#7A2F43]">
+                <span className="text-xl lg:text-2xl font-bold text-[#7a2f43]">
                   {questions.length}
                 </span>
-                <span className="text-xs text-[#2B2024]">Total Questions</span>
+                <span className="text-xs text-[#202124]">Total Questions</span>
               </div>
             </div>
           </div>
@@ -744,18 +744,18 @@ const handleNext = async () => {
 
         {/* Right Panel */}
         <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 min-w-0">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#7A2F43] mb-4 lg:mb-6">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#7a2f43] mb-4 lg:mb-6">
             AI Smart Interview
           </h2>
 
           {/* Question Box */}
           {!isIntroPhase && (
             <div className="mb-4 lg:mb-6 glass-card p-5 sm:p-6 rounded-[28px]">
-              <p className="text-xs sm:text-sm text-[#9B4D6D] font-semibold mb-2">
+              <p className="text-xs sm:text-sm text-[#9b3d55] font-semibold mb-2">
                 Question {currentIndex + 1} of {questions.length}
               </p>
 
-              <div className="text-base sm:text-xl font-semibold text-[#2B2024] leading-relaxed">
+              <div className="text-base sm:text-xl font-semibold text-[#202124] leading-relaxed">
                 {currentQuestion?.question}
               </div>
             </div>
@@ -769,7 +769,7 @@ const handleNext = async () => {
               setAnswer(e.target.value);
             }}
             placeholder="Type your answer here..."
-            className="premium-input w-full min-h-44 sm:min-h-[220px] lg:flex-1 p-4 sm:p-6 rounded-[28px] resize-none outline-none transition text-[#2B2024] placeholder:text-[#9b8b90]"
+            className="premium-input w-full min-h-44 sm:min-h-[220px] lg:flex-1 p-4 sm:p-6 rounded-[28px] resize-none outline-none transition text-[#202124] placeholder:text-[#9b8b90]"
           />
 
           {/* Buttons */}
@@ -780,8 +780,8 @@ const handleNext = async () => {
                 whileTap={{ scale: 0.9 }}
                 className={`w-14 h-14 lg:w-16 lg:h-16 shrink-0 flex items-center justify-center rounded-2xl shadow-lg transition ${
                   isMicOn
-                    ? "bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-white shadow-[#7a2f43]/25"
-                    : "bg-white text-[#7A2F43] border border-[#EAD9DE] shadow-[#7a2f43]/10"
+                    ? "bg-[#2b2b2f] text-[#f0c36a] shadow-[#2b2b2f]/20"
+                    : "bg-white text-[#7a2f43] border border-[#eaded1] shadow-[#7a2f43]/10"
                 }`}
               >
                 {isMicOn ? (
@@ -798,7 +798,7 @@ const handleNext = async () => {
                 className={`min-w-0 flex-1 px-3 py-3 lg:py-4 rounded-2xl shadow-lg transition font-semibold
     ${
       isSubmitting
-        ? "bg-[#D8A7B1] cursor-not-allowed text-white"
+        ? "bg-[#f0c36a] cursor-not-allowed text-white"
         : "premium-button cursor-pointer"
     }
               `}
@@ -812,8 +812,8 @@ const handleNext = async () => {
               animate={{ opacity: 1 }}
               className="mt-6 glass-card p-5 rounded-[28px]"
             >
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9B4D6D] mb-2">AI Feedback</p>
-              <p className="text-[#2B2024] text-[15px] leading-6 mb-4">{feedback}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9b3d55] mb-2">AI Feedback</p>
+              <p className="text-[#202124] text-[15px] leading-6 mb-4">{feedback}</p>
 
               <button
                 onClick={handleNext}
@@ -832,20 +832,20 @@ const handleNext = async () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#2B2024]/45 px-3 py-6 backdrop-blur-xl sm:px-6"
+            className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#202124]/45 px-3 py-6 backdrop-blur-xl sm:px-6"
           >
             <motion.div
-              className="pointer-events-none absolute left-[8%] top-[12%] h-36 w-36 rounded-full bg-[#D8A7B1]/35 blur-3xl sm:h-56 sm:w-56"
+              className="pointer-events-none absolute left-[8%] top-[12%] h-36 w-36 rounded-full bg-[#f0c36a]/35 blur-3xl sm:h-56 sm:w-56"
               animate={{ y: [0, -14, 0], scale: [1, 1.08, 1] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="pointer-events-none absolute bottom-[10%] right-[8%] h-40 w-40 rounded-full bg-[#9B4D6D]/20 blur-3xl sm:h-64 sm:w-64"
+              className="pointer-events-none absolute bottom-[10%] right-[8%] h-40 w-40 rounded-full bg-[#9b3d55]/20 blur-3xl sm:h-64 sm:w-64"
               animate={{ y: [0, 18, 0], scale: [1.08, 1, 1.08] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="pointer-events-none absolute right-[28%] top-[20%] h-24 w-24 rounded-full bg-[#FAF6F3]/45 blur-2xl"
+              className="pointer-events-none absolute right-[28%] top-[20%] h-24 w-24 rounded-full bg-[#f9f5ef]/45 blur-2xl"
               animate={{ x: [0, 16, 0], y: [0, -10, 0] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -859,10 +859,10 @@ const handleNext = async () => {
                   top: `${8 + ((index * 29) % 36)}%`,
                   background:
                     index % 3 === 0
-                      ? "#7A2F43"
+                      ? "#7a2f43"
                       : index % 3 === 1
-                        ? "#D8A7B1"
-                        : "#D8A7B1",
+                        ? "#f0c36a"
+                        : "#f0c36a",
                 }}
                 initial={{ opacity: 0, y: -20, scale: 0 }}
                 animate={{
@@ -886,13 +886,13 @@ const handleNext = async () => {
               transition={{ type: "spring", stiffness: 170, damping: 19 }}
               className="relative w-full max-w-[620px] overflow-hidden rounded-[28px] border border-white/55 bg-white/85 shadow-[0_25px_80px_rgba(122,47,67,.25)] backdrop-blur-2xl"
             >
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#7A2F43] via-[#D8A7B1] to-[#9B4D6D]" />
-              <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#D8A7B1]/22 blur-2xl" />
-              <div className="absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-[#9B4D6D]/12 blur-2xl" />
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#7a2f43] via-[#f0c36a] to-[#9b3d55]" />
+              <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#f0c36a]/22 blur-2xl" />
+              <div className="absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-[#9b3d55]/12 blur-2xl" />
 
               <div className="relative p-5 sm:p-8">
                 <motion.div
-                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7A2F43] via-[#9B4D6D] to-[#D8A7B1] text-[#D8A7B1] shadow-xl shadow-[#7a2f43]/30"
+                  className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#2b2b2f] text-[#f0c36a] shadow-xl shadow-[#7a2f43]/20"
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.1 }}
@@ -911,19 +911,19 @@ const handleNext = async () => {
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   className="text-center"
                 >
-                  <h3 className="text-3xl font-bold leading-tight text-slate-950 sm:text-4xl">
+                  <h3 className="text-3xl font-bold leading-tight text-[#202124] sm:text-4xl">
                     🎉 Congratulations!
                   </h3>
-                  <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+                  <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#6e6963] sm:text-base">
                     You've successfully completed your AI interview. Your personalized interview report is ready with AI feedback, performance analysis, and interview-ready answers.
                   </p>
-                  <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500">
+                  <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[#8d8580]">
                     Before viewing your report, we'd love to hear about your experience. Your feedback helps us improve the interview experience for everyone.
                   </p>
                 </motion.div>
 
-                <div className="mt-7 rounded-3xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-slate-200/70 backdrop-blur-xl sm:p-6">
-                  <p className="text-center text-sm font-semibold text-slate-700">
+                <div className="mt-7 rounded-3xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-[#d7c7b8]/40 backdrop-blur-xl sm:p-6">
+                  <p className="text-center text-sm font-semibold text-[#3e3a36]">
                     Rate your interview experience
                   </p>
 
@@ -938,10 +938,10 @@ const handleNext = async () => {
                           setInterviewRating(star);
                           setRatingError("");
                         }}
-                        className={`rounded-2xl p-2.5 text-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] sm:p-3 sm:text-3xl ${
+                        className={`rounded-2xl p-2.5 text-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#9b3d55] sm:p-3 sm:text-3xl ${
                           star <= interviewRating
-                            ? "bg-gradient-to-br from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] text-white shadow-lg shadow-[#3B82F6]/35"
-                            : "bg-slate-100 text-slate-300 hover:bg-white hover:text-[#7C3AED] hover:shadow-md"
+                            ? "bg-[#2b2b2f] text-[#f0c36a] shadow-lg shadow-[#2b2b2f]/20"
+                            : "bg-[#f9f5ef] text-[#d8c7b9] hover:bg-white hover:text-[#9b3d55] hover:shadow-md"
                         }`}
                         aria-label={`Rate ${star} star`}
                       >
@@ -964,7 +964,7 @@ const handleNext = async () => {
                     value={interviewComment}
                     onChange={(e) => setInterviewComment(e.target.value)}
                     placeholder="Tell us what you liked or what we can improve..."
-                    className="mt-5 w-full min-h-28 rounded-2xl border border-slate-200 bg-white/90 p-4 text-sm text-slate-800 shadow-inner shadow-slate-100 outline-none resize-none transition duration-300 placeholder:text-slate-400 focus:border-[#3B82F6] focus:ring-4 focus:ring-[#3B82F6]/15"
+                    className="mt-5 w-full min-h-28 rounded-2xl border border-[#eaded1] bg-white/90 p-4 text-sm text-[#202124] shadow-inner shadow-[#d7c7b8]/30 outline-none resize-none transition duration-300 placeholder:text-[#8d8580] focus:border-[#9b3d55] focus:ring-4 focus:ring-[#9b3d55]/15"
                   />
 
                   <motion.button
@@ -975,8 +975,8 @@ const handleNext = async () => {
                     whileTap={interviewRating && !isFinishingInterview ? { scale: 0.98 } : undefined}
                     className={`mt-5 w-full rounded-2xl px-5 py-4 text-sm font-bold text-white shadow-xl transition-all duration-300 sm:text-base ${
                       interviewRating && !isFinishingInterview
-                        ? "bg-gradient-to-r from-[#7C3AED] via-[#3B82F6] to-[#06B6D4] shadow-[#3B82F6]/30 hover:shadow-[#7C3AED]/30"
-                        : "cursor-not-allowed bg-slate-300 shadow-slate-200"
+                        ? "bg-[#7a2f43] hover:bg-[#642638] shadow-[#7a2f43]/20"
+                        : "cursor-not-allowed bg-[#8d8580] shadow-[#d7c7b8]/40"
                     }`}
                   >
                     {finishSuccess
@@ -996,4 +996,6 @@ const handleNext = async () => {
 }
 
 export default Step2Interview;
+
+
 

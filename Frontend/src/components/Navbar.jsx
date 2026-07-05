@@ -16,7 +16,6 @@ import AuthModel from "./AuthModel.jsx";
 function Navbar() {
   const state = useSelector((state) => state);
   const userData = state.user.userData;
-  console.log("Navbar userData:", userData);
   const [showCreditsPopup, setShowCreditsPopup] = useState(false);
   const [showUserPopup, setShowUserPopup] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
@@ -42,13 +41,13 @@ function Navbar() {
   };
 
   return (
-    <div className="bg-[#FAF6F3] flex justify-center px-3 sm:px-4 pt-4 sm:pt-6 relative z-[100]">
+    <div className="bg-[#f6f1ea] flex justify-center px-3 sm:px-4 pt-4 sm:pt-6 relative z-[100]">
       <motion.div
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-6xl bg-white/90 rounded-2xl sm:rounded-[24px] shadow-lg shadow-[#7A2F43]/10
-        border border-[#EAD9DE] px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center gap-3 relative backdrop-blur"
+        className="w-full max-w-6xl bg-white/90 rounded-2xl sm:rounded-[24px] shadow-sm shadow-[#d7c7b8]/40
+        border border-[#eaded1] px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center gap-3 relative backdrop-blur"
       >
         <div
           onClick={() => {
@@ -58,11 +57,11 @@ function Navbar() {
           }}
           className="flex min-w-0 items-center gap-2 sm:gap-3 cursor-pointer"
         >
-          <div className="bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-[#D8A7B1] p-2 rounded-xl shadow-sm shadow-[#7A2F43]/20">
+          <div className="bg-[#2b2b2f] text-[#f0c36a] p-2 rounded-lg shadow-sm shadow-[#2b2b2f]/20">
             <FaRobot size={18} />
           </div>
 
-          <h1 className="font-semibold hidden sm:block text-base md:text-lg text-[#2B2024] truncate">
+          <h1 className="font-semibold hidden sm:block text-base md:text-lg text-[#202124] truncate">
             Yuvixa AI
           </h1>
         </div>
@@ -80,8 +79,8 @@ function Navbar() {
                 setShowUserPopup(false);
                 setShowCreditsPopup(!showCreditsPopup);
               }}
-              className="flex items-center gap-1.5 sm:gap-2 bg-white text-[#7A2F43]
-              px-2.5 sm:px-4 py-2 rounded-full text-sm hover:bg-[#FAF6F3] transition border border-[#EAD9DE] shadow-sm shadow-[#7A2F43]/10 hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 sm:gap-2 bg-[#f2e6dc] text-[#7a2f43]
+              px-2.5 sm:px-4 py-2 rounded-full text-sm hover:bg-[#ead8cf] transition border border-[#ead8c8]"
             >
               <BsCoin size={20} />
 
@@ -92,8 +91,8 @@ function Navbar() {
             {showCreditsPopup && (
               <div
                 className="absolute right-0 mt-3 w-[min(16rem,calc(100vw-1.5rem))]
-                bg-white/95 shadow-2xl shadow-[#7A2F43]/15 border border-[#EAD9DE] rounded-2xl
-                p-5 z-[120] backdrop-blur"
+                bg-white shadow-2xl shadow-[#7a2f43]/15 border border-[#eaded1] rounded-xl
+                p-5 z-[120]"
               >
                 <p className="text-sm text-[#6e6963] mb-4">
                   Need more credits to continue interviews?
@@ -101,7 +100,7 @@ function Navbar() {
 
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="w-full bg-gradient-to-r from-[#7A2F43] to-[#9B4D6D] hover:from-[#642638] hover:to-[#7A2F43] text-white py-2 rounded-xl text-sm transition shadow-md shadow-[#7A2F43]/20"
+                  className="w-full bg-[#7a2f43] hover:bg-[#642638] text-white py-2 rounded-lg text-sm transition"
                 >
                   Buy more credits
                 </button>
@@ -121,8 +120,8 @@ function Navbar() {
                 setShowCreditsPopup(false);
                 setShowUserPopup(!showUserPopup);
               }}
-              className="w-9 h-9 bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] text-white rounded-full
-              flex items-center justify-center font-semibold shadow-md shadow-[#7A2F43]/20 transition hover:-translate-y-0.5"
+              className="w-9 h-9 bg-[#2b2b2f] text-[#f0c36a] rounded-full
+              flex items-center justify-center font-semibold"
             >
               {userData ? (
                 // ✅ Fixed
@@ -134,9 +133,9 @@ function Navbar() {
 
             {showUserPopup && (
               <div
-                className="absolute right-0 mt-3 w-[min(13rem,calc(100vw-1.5rem))] bg-white/95
-                shadow-2xl shadow-[#7A2F43]/15 border border-[#EAD9DE] rounded-2xl
-                p-4 z-[120] backdrop-blur"
+                className="absolute right-0 mt-3 w-[min(13rem,calc(100vw-1.5rem))] bg-white
+                shadow-2xl shadow-[#7a2f43]/15 border border-[#eaded1] rounded-xl
+                p-4 z-[120]"
               >
                 {/* ✅ This was already correct */}
                 <p className="text-[#202124] text-sm font-medium break-words">
@@ -171,4 +170,3 @@ function Navbar() {
 }
 
 export default Navbar;
-

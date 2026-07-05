@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 
 import {
@@ -27,20 +27,21 @@ function Home() {
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.user);
+
   useEffect(() => {
-  if (userData) {
-    setShowAuth(false);
-  }
-}, [userData]);
+    if (userData) {
+      setShowAuth(false);
+    }
+  }, [userData]);
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(216,167,177,0.28),transparent_28rem),linear-gradient(135deg,#FAF6F3_0%,#FFFFFF_100%)] flex flex-col text-[#2B2024]">
+    <div className="min-h-screen bg-[#f6f1ea] flex flex-col text-[#202124]">
       <Navbar />
 
       <div className="flex-1 px-4 sm:px-6 py-10 sm:py-16 lg:py-20">
         <div className=" max-w-6xl mx-auto">
           <div className="flex justify-center mb-6">
-            <div className="bg-white/90 text-[#2B2024] text-xs sm:text-sm px-4 py-2 rounded-full flex items-center gap-2 border border-[#EAD9DE] shadow-sm shadow-[#7A2F43]/5 backdrop-blur text-center">
-              <HiSparkles size={16} className="text-[#9B4D6D]" />
+            <div className="bg-white/90 text-[#5f5b56] text-xs sm:text-sm px-4 py-2 rounded-full flex items-center gap-2 border border-[#e6d8c8] shadow-sm backdrop-blur text-center">
+              <HiSparkles size={16} className="text-[#9b3d55]" />
               AI-Powered Mock Interview Platform
             </div>
           </div>
@@ -49,11 +50,11 @@ function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl mx-auto text-[#2B2024]"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight max-w-4xl mx-auto text-[#171717]"
             >
               Practice Interviews with
               <span className="relative inline-block mt-2 sm:mt-0 sm:ml-3">
-                <span className="bg-white/90 text-[#7A2F43] px-3 sm:px-4 py-1 rounded-full shadow-sm shadow-[#7A2F43]/10 border border-[#EAD9DE]">
+                <span className="bg-[#ead8cf] text-[#7a2f43] px-3 sm:px-4 py-1 rounded-full shadow-sm">
                   AI Interview Coach
                 </span>
               </span>
@@ -63,7 +64,7 @@ function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="text-[#2B2024] mt-6 max-w-2xl mx-auto text-base sm:text-lg leading-8"
+              className="text-[#6e6963] mt-6 max-w-2xl mx-auto text-base sm:text-lg"
             >
               Practice role-based interviews with an AI interviewer,
               receive instant feedback, and improve your confidence.
@@ -78,9 +79,9 @@ function Home() {
                   }
                   navigate("/interview");
                 }}
-                whileHover={{ y: -2, scale: 1.03 }}
+                whileHover={{ opacity: 0.9, scale: 1.03 }}
                 whileTap={{ opacity: 1, scale: 0.98 }}
-                className="bg-gradient-to-r from-[#7A2F43] to-[#9B4D6D] text-white px-6 sm:px-10 py-3 rounded-full hover:from-[#642638] hover:to-[#7A2F43] transition shadow-lg shadow-[#7A2F43]/20 w-full sm:w-auto font-semibold"
+                className="bg-[#7a2f43] text-white px-6 sm:px-10 py-3 rounded-full hover:bg-[#642638] transition shadow-lg shadow-[#7a2f43]/20 w-full sm:w-auto"
               >
                 Start Interview
               </motion.button>
@@ -93,9 +94,9 @@ function Home() {
                   }
                   navigate("/history");
                 }}
-                whileHover={{ y: -2, scale: 1.03 }}
+                whileHover={{ opacity: 0.9, scale: 1.03 }}
                 whileTap={{ opacity: 1, scale: 0.98 }}
-                className="border border-[#EAD9DE] bg-white/90 text-[#2B2024] px-6 sm:px-10 py-3 rounded-full hover:border-[#D8A7B1] hover:text-[#7A2F43] transition shadow-sm shadow-[#7A2F43]/5 w-full sm:w-auto font-semibold backdrop-blur"
+                className="border border-[#d8c7b9] bg-white/90 text-[#3e3a36] px-6 sm:px-10 py-3 rounded-full hover:bg-[#2b2b2f] hover:border-[#2b2b2f] hover:text-white transition shadow-sm w-full sm:w-auto"
               >
                 View History
               </motion.button>
@@ -127,11 +128,11 @@ function Home() {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 + index * 0.2 }}
-                whileHover={{ rotate: 0, y: -8, scale: 1.03 }}
+                whileHover={{ rotate: 0, scale: 1.06 }}
                 className={`
-relative bg-white/90 rounded-2xl sm:rounded-3xl border border-[#EAD9DE]
-hover:border-[#D8A7B1] p-7 sm:p-8 lg:p-10 w-full sm:w-80 max-w-none shadow-lg shadow-[#7A2F43]/10
-hover:shadow-2xl hover:shadow-[#7A2F43]/15 backdrop-blur
+relative bg-white rounded-2xl sm:rounded-3xl border-2 border-[#eaded1]
+hover:border-[#9b3d55] p-7 sm:p-8 lg:p-10 w-full sm:w-80 max-w-none shadow-md shadow-[#d7c7b8]/40
+hover:shadow-2xl hover:shadow-[#9b3d55]/10
 transition-all duration-300
 ${index === 0 ? "md:rotate-[-4deg]" : ""}
 ${index === 1 ? "md:rotate-[3deg] md:-mt-6 shadow-xl" : ""}
@@ -139,19 +140,19 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
 `}
               >
                 <div
-                  className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gradient-to-br from-[#7A2F43] to-[#9B4D6D] border-2
- border-white text-[#D8A7B1] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-[#7A2F43]/20"
+                  className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#2b2b2f] border-2
+ border-white text-[#f0c36a] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-[#2b2b2f]/20"
                 >
                   {item.icon}
                 </div>
                 <div className="pt-10 text-center">
-                  <div className="text-xs text-[#9B4D6D] font-semibold mb-2 tracking-wider">
+                  <div className="text-xs text-[#9b3d55] font-semibold mb-2 tracking-wider">
                     {item.step}
                   </div>
-                  <h3 className="font-semibold mb-3 text-lg text-[#2B2024]">
+                  <h3 className="font-semibold mb-3 text-lg text-[#202124]">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-[#2B2024] leading-relaxed">
+                  <p className="text-sm text-[#6e6963] leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -164,9 +165,9 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl sm:text-4xl font-bold text-center mb-8 sm:mb-14 lg:mb-16 text-[#2B2024]"
+              className="text-2xl sm:text-4xl font-semibold text-center mb-8 sm:mb-14 lg:mb-16"
             >
-              Advanced AI <span className="text-[#9B4D6D]">Capabilities</span>
+              Advanced AI <span className="text-[#9b3d55]">Capabilities</span>
             </motion.h2>
 
             <div className="grid lg:grid-cols-2 gap-5 sm:gap-8 lg:gap-10">
@@ -201,26 +202,26 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -6, scale: 1.01 }}
-                  className="bg-white/90 border border-[#EAD9DE] rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 shadow-lg shadow-[#7A2F43]/10 hover:shadow-2xl hover:shadow-[#7A2F43]/15 hover:border-[#D8A7B1] transition-all backdrop-blur"
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white border border-[#eaded1] rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 shadow-sm shadow-[#d7c7b8]/30 hover:shadow-xl hover:shadow-[#9b3d55]/10 hover:border-[#d8b1a1] transition-all"
                 >
                   <div className="flex flex-col sm:flex-row items-center gap-6 lg:gap-8">
                     <div className="w-full sm:w-1/2 flex justify-center">
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-auto object-contain max-h-48 sm:max-h-56 lg:max-h-64 drop-shadow-lg"
+                        className="w-full h-auto object-contain max-h-48 sm:max-h-56 lg:max-h-64"
                       />
                     </div>
 
                     <div className="w-full sm:w-1/2 text-center sm:text-left">
-                      <div className="bg-[#FAF6F3] text-[#9B4D6D] w-12 h-12 rounded-xl flex items-center justify-center mb-6 border border-[#EAD9DE] shadow-sm">
+                      <div className="bg-[#f2e6dc] text-[#9b3d55] w-12 h-12 rounded-xl flex items-center justify-center mb-6 border border-[#ead8c8]">
                         {item.icon}
                       </div>
 
-                      <h3 className="text-[#2B2024] font-semibold text-lg mb-2">{item.title}</h3>
+                      <h3 className="text-[#202124] font-semibold text-lg mb-2">{item.title}</h3>
 
-                      <p className="text-[#2B2024] text-sm leading-relaxed">
+                      <p className="text-[#6e6963] text-sm leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -235,9 +236,9 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl sm:text-4xl font-bold text-center mb-8 sm:mb-14 lg:mb-16 text-[#2B2024]"
+              className="text-2xl sm:text-4xl font-semibold text-center mb-8 sm:mb-14 lg:mb-16"
             >
-              Multiple Interview <span className="text-[#9B4D6D]">Modes</span>
+              Multiple Interview <span className="text-[#9b3d55]">Modes</span>
             </motion.h2>
 
             <div className="grid lg:grid-cols-2 gap-5 sm:gap-8 lg:gap-10">
@@ -272,15 +273,15 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ y: -6 }}
-                  className="bg-white/90 border border-[#EAD9DE] rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 shadow-lg shadow-[#7A2F43]/10 hover:shadow-2xl hover:shadow-[#7A2F43]/15 hover:border-[#D8A7B1] transition-all backdrop-blur"
+                  className="bg-white border border-[#eaded1] rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 shadow-sm shadow-[#d7c7b8]/30 hover:shadow-xl hover:shadow-[#9b3d55]/10 hover:border-[#d8b1a1] transition-all"
                 >
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="w-full sm:w-1/2 text-center sm:text-left">
-                      <h3 className="font-semibold text-xl mb-3 text-[#2B2024]">
+                      <h3 className="font-semibold text-xl mb-3 text-[#202124]">
                         {mode.title}
                       </h3>
 
-                      <p className="text-[#2B2024] text-sm leading-relaxed">
+                      <p className="text-[#6e6963] text-sm leading-relaxed">
                         {mode.desc}
                       </p>
                     </div>
@@ -290,7 +291,7 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
                       <img
                         src={mode.img}
                         alt={mode.title}
-                        className="w-28 h-28 object-contain drop-shadow-lg"
+                        className="w-28 h-28 object-contain"
                       />
                     </div>
                   </div>
@@ -301,8 +302,8 @@ ${index === 2 ? "md:rotate-[-3deg]" : ""}
         </div>
       </div>
       {!userData && showAuth && (
-  <AuthModel onClose={() => setShowAuth(false)} />
-)}
+        <AuthModel onClose={() => setShowAuth(false)} />
+      )}
       <Footer />
     </div>
   );

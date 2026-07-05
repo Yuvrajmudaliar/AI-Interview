@@ -137,7 +137,9 @@ ${isModel ? "max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl" : "max-w-lg p-5 sm:
         <motion.button
   onClick={handleGoogleAuth}
   disabled={loading}
-  className="w-full flex items-center justify-center gap-3 py-3 bg-[#7a2f43] text-white rounded-full"
+  whileHover={{ opacity: loading ? 1 : 0.9, scale: loading ? 1 : 1.03 }}
+  whileTap={{ opacity: 1, scale: loading ? 1 : 0.98 }}
+  className="w-full flex items-center justify-center gap-3 py-3 bg-[#7a2f43] text-white rounded-full shadow-md shadow-[#7a2f43]/20 hover:bg-[#642638] border border-[#642638] disabled:bg-[#8d8580]"
 >
   {loading ? (
     <>
@@ -157,3 +159,6 @@ ${isModel ? "max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl" : "max-w-lg p-5 sm:
 }
 
 export default Auth;
+
+
+
